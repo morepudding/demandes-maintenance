@@ -1,6 +1,6 @@
-# 🚀 Template Next.js Beneteau
+# 🚀 Demandes de Maintenance
 
-> Template standardisé pour les applications internes Beneteau  
+> Application de gestion des demandes de maintenance Beneteau  
 > **Stack** : Next.js 15 • React 19 • TypeScript • MSSQL • Azure AD • TailwindCSS
 
 ---
