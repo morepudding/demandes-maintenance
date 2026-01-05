@@ -1,7 +1,7 @@
 {
-    "name": "template-nextjs-beneteau",
+    "name": "demandes-maintenance",
     "version": "1.0.0",
-    "description": "Template Next.js pour les projets Beneteau - MSSQL + Azure AD + Atomic Design",
+    "description": "Application de gestion des demandes de maintenance - MSSQL + Azure AD + Atomic Design",
     "private": true,
     "scripts": {
         "dev": "next dev",
