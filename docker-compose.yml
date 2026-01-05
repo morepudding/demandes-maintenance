@@ -1,0 +1,15 @@
+version: '3.4'
+ 
+services:
+  db:
+    image: mcr.microsoft.com/azure-sql-edge
+    environment:
+      - ACCEPT_EULA=1
+      - MSSQL_SA_PASSWORD=M5-sq1_s8v
+    volumes:
+      - db-data:/var/lib/mssql/data:rw
+    ports:
+      - '1433:1433'
+ 
+volumes:
+  db-data: {}

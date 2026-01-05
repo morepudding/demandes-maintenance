@@ -1,0 +1,9 @@
+{
+    "esm": true,
+    "type": "module",
+    "compilerOptions": {
+        "module": "esnext",
+        "moduleResolution": "node",
+        "target": "es2017"
+    }
+}
