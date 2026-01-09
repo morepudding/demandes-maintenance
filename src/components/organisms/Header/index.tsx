@@ -1,46 +1,17 @@
 "use client";
 
-import {
-    NavigationMenu,
-    NavigationMenuItem,
-    NavigationMenuLink,
-    NavigationMenuList,
-    navigationMenuTriggerStyle,
-} from "@/components/molecules/NavigationMenu";
-import { LayoutDashboard } from "lucide-react";
-import Link from "next/link";
 import AuthenticatedNav from "./AuthenticatedNav";
 
 export default function Header() {
     return (
-        <div className="flex w-full h-15 bg-black align-middle pl-8 mb-3">
-            <div className="flex grow items-center text-center font-bold text-xl text-white uppercase">
-                <p>My Application</p>
+        <div className="flex w-full flex-col items-center bg-black px-4 py-3 sm:px-8 md:flex-row md:items-center">
+            <div className="font-bold text-lg sm:text-xl text-white uppercase text-center md:absolute md:left-1/2 md:-translate-x-1/2">
+                <p>Demandes de maintenance</p>
             </div>
 
-            <NavigationMenu className="flex-none">
-                <NavigationMenuList>
-                    <NavigationMenuItem className="px-2 ">
-                        <Link href="/bdd" legacyBehavior passHref>
-                            <NavigationMenuLink
-                                className={navigationMenuTriggerStyle()}
-                            >
-                                BDD Connection
-                            </NavigationMenuLink>
-                        </Link>
-                    </NavigationMenuItem>
-                    <NavigationMenuItem className="px-2">
-                        <Link href="/" legacyBehavior passHref>
-                            <NavigationMenuLink
-                                className={navigationMenuTriggerStyle()}
-                            >
-                                My New Function
-                            </NavigationMenuLink>
-                        </Link>
-                    </NavigationMenuItem>
-                </NavigationMenuList>
-            </NavigationMenu>
-            <AuthenticatedNav />
+            <div className="mt-2 mx-auto md:mx-0 md:mt-0 md:ml-auto flex items-center">
+                <AuthenticatedNav />
+            </div>
         </div>
     );
 }

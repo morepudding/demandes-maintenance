@@ -25,7 +25,9 @@ export default async function RootLayout({
             <body>
                 <AuthProvider session={session}>
                     <HeaderWrapper />
-                    {process.env.NODE_ENV!=='development' && !session && <SignInRedirect />}
+                    {process.env.NODE_ENV !== "development" && !session && (
+                        <SignInRedirect />
+                    )}
                     {children}
                 </AuthProvider>
             </body>
