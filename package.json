@@ -21,11 +21,11 @@
     },
     "lint-staged": {
         "*.{ts,tsx}": [
-            "eslint --fix",
-            "prettier --write"
+            "npx eslint --fix",
+            "npx prettier --write"
         ],
         "*.{json,md,yml,yaml}": [
-            "prettier --write"
+            "npx prettier --write"
         ]
     },
     "files": [
@@ -95,18 +95,18 @@
         "eslint": "^9",
         "eslint-config-next": "15.2.1",
         "eslint-plugin-storybook": "^0.11.4",
+        "husky": "^9.1.6",
         "jsdom": "^26.0.0",
-        "lightningcss": "1.21.0",
+        "lint-staged": "^15.2.10",
         "playwright": "^1.51.0",
         "postcss": "^8.5.3",
+        "prettier": "^3.7.4",
         "sass": "^1.85.1",
         "storybook": "^8.6.4",
         "ts-node": "^10.9.2",
         "tsx": "^4.19.3",
         "typescript": "^5.8.2",
         "vite-tsconfig-paths": "^5.1.4",
-        "vitest": "^3.0.8",
-        "husky": "^9.1.6",
-        "lint-staged": "^15.2.10"
+        "vitest": "^3.0.8"
     }
 }
