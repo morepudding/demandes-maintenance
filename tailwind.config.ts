@@ -1,6 +1,7 @@
+import type { Config } from "tailwindcss";
 import tailwindAnimate from "tailwindcss-animate";
 
-const config = {
+const config: Config = {
     darkMode: ["class"],
     content: [
         "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
