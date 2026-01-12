@@ -1,3 +1,5 @@
+import tailwindAnimate from "tailwindcss-animate";
+
 const config = {
     darkMode: ["class"],
     content: [
@@ -48,6 +50,13 @@ const config = {
                     "4": "hsl(var(--chart-4))",
                     "5": "hsl(var(--chart-5))",
                 },
+                // Couleurs des statuts de demandes
+                status: {
+                    pending: "#FCD34D", // Jaune - En attente
+                    approved: "#34D399", // Vert - Validé
+                    rejected: "#F87171", // Rouge - Refusé
+                    abandoned: "#9CA3AF", // Gris - Abandonné
+                },
             },
             borderRadius: {
                 lg: "var(--radius)",
@@ -56,7 +65,7 @@ const config = {
             },
         },
     },
-    plugins: [require("tailwindcss-animate")],
+    plugins: [tailwindAnimate],
 };
 
-module.exports = config;
+export default config;

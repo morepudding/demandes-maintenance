@@ -8,9 +8,9 @@ import authOptions from "../../auth.config";
 import SignInRedirect from "./SignInRedirect";
 
 export const metadata: Metadata = {
-    title: "Back Office SpareParts",
+    title: "Demandes de Maintenance",
     description:
-        "Application back office pour administrer les pièces détachées chez Bénéteau",
+        "Application de gestion des demandes de maintenance - Bénéteau",
 };
 
 export default async function RootLayout({
@@ -25,7 +25,9 @@ export default async function RootLayout({
             <body>
                 <AuthProvider session={session}>
                     <HeaderWrapper />
-                    {process.env.NODE_ENV!=='development' && !session && <SignInRedirect />}
+                    {process.env.NODE_ENV !== "development" && !session && (
+                        <SignInRedirect />
+                    )}
                     {children}
                 </AuthProvider>
             </body>
