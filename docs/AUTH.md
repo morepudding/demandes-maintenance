@@ -5,6 +5,7 @@
 L'application utilise **NextAuth.js** avec le provider **Azure Active Directory** pour l'authentification.
 
 ### Stack
+
 - **NextAuth.js v4** - Gestion de l'authentification
 - **Azure AD** - Provider d'authentification Microsoft
 - **JWT** - Stratégie de session
@@ -29,8 +30,8 @@ AZURE_AD_TENANT_ID=your_azure_ad_tenant_id
 AZURE_AD_SCOPE=openid profile email
 ```
 
-> **Note pour le développement** : En attendant la création de l'App Registration dédiée, 
-> vous pouvez utiliser temporairement les credentials d'une autre application Azure AD 
+> **Note pour le développement** : En attendant la création de l'App Registration dédiée,
+> vous pouvez utiliser temporairement les credentials d'une autre application Azure AD
 > (ex: app Print) pour tester l'authentification en local.
 
 ### Comment obtenir les credentials Azure AD
@@ -39,12 +40,12 @@ AZURE_AD_SCOPE=openid profile email
 2. Naviguer vers **Azure Active Directory** > **App registrations**
 3. Créer une nouvelle application (ou utiliser une existante)
 4. Récupérer :
-   - **Client ID** (Application ID)
-   - **Tenant ID** (Directory ID)
+    - **Client ID** (Application ID)
+    - **Tenant ID** (Directory ID)
 5. Créer un **Client Secret** dans "Certificates & secrets"
 6. Configurer les **Redirect URIs** :
-   - `http://localhost:3000/api/auth/callback/azure-ad` (dev)
-   - `https://votre-domaine.com/api/auth/callback/azure-ad` (prod)
+    - `http://localhost:3000/api/auth/callback/azure-ad` (dev)
+    - `https://votre-domaine.com/api/auth/callback/azure-ad` (prod)
 
 ---
 
@@ -60,22 +61,22 @@ Hook client-side pour accéder aux informations de l'utilisateur connecté.
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export default function MaPage() {
-  const { name, email, isAuthenticated, isLoading } = useCurrentUser();
+    const { name, email, isAuthenticated, isLoading } = useCurrentUser();
 
-  if (isLoading) {
-    return <div>Chargement...</div>;
-  }
+    if (isLoading) {
+        return <div>Chargement...</div>;
+    }
 
-  if (!isAuthenticated) {
-    return <div>Vous devez être connecté</div>;
-  }
+    if (!isAuthenticated) {
+        return <div>Vous devez être connecté</div>;
+    }
 
-  return (
-    <div>
-      <h1>Bonjour {name}</h1>
-      <p>Email: {email}</p>
-    </div>
-  );
+    return (
+        <div>
+            <h1>Bonjour {name}</h1>
+            <p>Email: {email}</p>
+        </div>
+    );
 }
 ```
 
@@ -88,21 +89,15 @@ import { signIn, signOut } from "next-auth/react";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export default function AuthButtons() {
-  const { isAuthenticated } = useCurrentUser();
+    const { isAuthenticated } = useCurrentUser();
 
-  if (isAuthenticated) {
+    if (isAuthenticated) {
+        return <button onClick={() => signOut()}>Déconnexion</button>;
+    }
+
     return (
-      <button onClick={() => signOut()}>
-        Déconnexion
-      </button>
+        <button onClick={() => signIn("azure-ad")}>Connexion Azure AD</button>
     );
-  }
-
-  return (
-    <button onClick={() => signIn("azure-ad")}>
-      Connexion Azure AD
-    </button>
-  );
 }
 ```
 
@@ -113,17 +108,17 @@ import { getServerSession } from "next-auth/next";
 import authOptions from "@/auth.config";
 
 export default async function MaPageServer() {
-  const session = await getServerSession(authOptions);
+    const session = await getServerSession(authOptions);
 
-  if (!session) {
-    return <div>Non connecté</div>;
-  }
+    if (!session) {
+        return <div>Non connecté</div>;
+    }
 
-  return (
-    <div>
-      <h1>Bonjour {session.user?.name}</h1>
-    </div>
-  );
+    return (
+        <div>
+            <h1>Bonjour {session.user?.name}</h1>
+        </div>
+    );
 }
 ```
 
@@ -134,6 +129,7 @@ export default async function MaPageServer() {
 ### Middleware automatique
 
 Le fichier `src/middleware.ts` protège automatiquement toutes les routes sauf :
+
 - `/` (page d'accueil publique)
 - `/api/auth/*` (routes NextAuth)
 
@@ -146,7 +142,9 @@ En **production**, les routes privées redirigent vers `/` si l'utilisateur n'es
 Dans `src/app/layout.tsx`, la redirection automatique est désactivée en dev :
 
 ```tsx
-{process.env.NODE_ENV !== 'development' && !session && <SignInRedirect />}
+{
+    process.env.NODE_ENV !== "development" && !session && <SignInRedirect />;
+}
 ```
 
 ---
@@ -186,6 +184,7 @@ src/
 ### Mode développement (sans Azure AD)
 
 En développement, vous pouvez travailler sans authentification :
+
 - `NODE_ENV=development` désactive les redirections forcées
 - Toutes les routes sont accessibles
 

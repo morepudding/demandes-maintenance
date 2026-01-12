@@ -26,7 +26,7 @@ async function analyzeDatabase() {
         console.log("Database:", process.env.DATABASE_NAME);
         console.log("Auth Type:", process.env.AZURE_SQL_AUTHENTICATIONTYPE);
         console.log("User:", process.env.DATABASE_USER);
-        
+
         const pool = await connectToDB();
         console.log("✅ Connexion réussie !");
 
@@ -39,7 +39,7 @@ async function analyzeDatabase() {
             AND TABLE_CATALOG = 'WF_Demandes_Maintenance'
             ORDER BY TABLE_NAME
         `);
-        
+
         const tables = tablesResult.recordset.map((row: any) => row.TABLE_NAME);
         console.log(`✅ ${tables.length} tables trouvées:`, tables);
 
@@ -83,7 +83,7 @@ async function analyzeDatabase() {
 
 **Serveur** : \`gbensqlsvrpowerappsprd.database.windows.net\`  
 **Base** : \`WF_Demandes_Maintenance\`  
-**Date d'analyse** : ${new Date().toLocaleDateString('fr-FR')}
+**Date d'analyse** : ${new Date().toLocaleDateString("fr-FR")}
 
 ---
 
@@ -91,7 +91,7 @@ async function analyzeDatabase() {
 
 Cette base contient **${tables.length} tables** :
 
-${tables.map(t => `- \`${t}\``).join('\n')}
+${tables.map((t) => `- \`${t}\``).join("\n")}
 
 ---
 
@@ -100,8 +100,10 @@ ${tables.map(t => `- \`${t}\``).join('\n')}
 `;
 
         for (const table of tables) {
-            const tableCols = columns.filter(c => c.TABLE_NAME === table);
-            const tableFKs = foreignKeys.filter(fk => fk.TABLE_NAME === table);
+            const tableCols = columns.filter((c) => c.TABLE_NAME === table);
+            const tableFKs = foreignKeys.filter(
+                (fk) => fk.TABLE_NAME === table,
+            );
 
             markdown += `### Table : \`${table}\`\n\n`;
             markdown += `**Nombre de colonnes** : ${tableCols.length}\n\n`;
@@ -111,11 +113,11 @@ ${tables.map(t => `- \`${t}\``).join('\n')}
             markdown += `|---------|------|----------|--------|\n`;
 
             for (const col of tableCols) {
-                const type = col.CHARACTER_MAXIMUM_LENGTH 
+                const type = col.CHARACTER_MAXIMUM_LENGTH
                     ? `${col.DATA_TYPE}(${col.CHARACTER_MAXIMUM_LENGTH})`
                     : col.DATA_TYPE;
-                const nullable = col.IS_NULLABLE === 'YES' ? '✅' : '❌';
-                const defaultVal = col.COLUMN_DEFAULT || '-';
+                const nullable = col.IS_NULLABLE === "YES" ? "✅" : "❌";
+                const defaultVal = col.COLUMN_DEFAULT || "-";
                 markdown += `| \`${col.COLUMN_NAME}\` | ${type} | ${nullable} | ${defaultVal} |\n`;
             }
 
@@ -131,28 +133,44 @@ ${tables.map(t => `- \`${t}\``).join('\n')}
         }
 
         // Sauvegarder le fichier
-        const outputPath = path.join(process.cwd(), 'docs', 'planning', 'DATABASE.md');
-        fs.writeFileSync(outputPath, markdown, 'utf-8');
+        const outputPath = path.join(
+            process.cwd(),
+            "docs",
+            "planning",
+            "DATABASE.md",
+        );
+        fs.writeFileSync(outputPath, markdown, "utf-8");
         console.log(`✅ Fichier créé : ${outputPath}`);
 
         // Sauvegarder aussi un fichier JSON pour faciliter la génération des types
         const schemaJson = {
             tables,
-            columns: columns.reduce((acc, col) => {
-                if (!acc[col.TABLE_NAME]) acc[col.TABLE_NAME] = [];
-                acc[col.TABLE_NAME].push(col);
-                return acc;
-            }, {} as Record<string, TableColumn[]>),
-            foreignKeys
+            columns: columns.reduce(
+                (acc, col) => {
+                    if (!acc[col.TABLE_NAME]) acc[col.TABLE_NAME] = [];
+                    acc[col.TABLE_NAME].push(col);
+                    return acc;
+                },
+                {} as Record<string, TableColumn[]>,
+            ),
+            foreignKeys,
         };
 
-        const jsonPath = path.join(process.cwd(), 'docs', 'planning', 'DATABASE_SCHEMA.json');
-        fs.writeFileSync(jsonPath, JSON.stringify(schemaJson, null, 2), 'utf-8');
+        const jsonPath = path.join(
+            process.cwd(),
+            "docs",
+            "planning",
+            "DATABASE_SCHEMA.json",
+        );
+        fs.writeFileSync(
+            jsonPath,
+            JSON.stringify(schemaJson, null, 2),
+            "utf-8",
+        );
         console.log(`✅ Fichier JSON créé : ${jsonPath}`);
 
         console.log("\n✅ Analyse terminée avec succès !");
         process.exit(0);
-
     } catch (err) {
         console.error("❌ Erreur lors de l'analyse:", err);
         process.exit(1);

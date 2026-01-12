@@ -69,30 +69,30 @@ Créer le repository `demandes-maintenance` à partir du template Beneteau et co
 ## 📋 Tâches
 
 ### Création du repo
-- [ ] Créer le repo `demandes-maintenance` sur GitHub
-- [ ] Cloner le template `template-nextjs-beneteau`
-- [ ] Copier les fichiers vers le nouveau repo
-- [ ] Supprimer les fichiers de démo non nécessaires
+- [x] Créer le repo `demandes-maintenance` on GitHub
+- [x] Cloner le template `template-nextjs-beneteau`
+- [x] Copier les fichiers vers le nouveau repo
+- [x] Supprimer les fichiers de démo non nécessaires
 
 ### Configuration des branches
-- [ ] Créer la branche `develop` depuis `main`
-- [ ] Configurer la protection de `main` :
+- [x] Créer la branche `develop` depuis `main`
+- [x] Configurer la protection de `main` :
   - Require PR + 1 review
   - Require CI to pass
   - No direct push
-- [ ] Configurer la protection de `develop` :
+- [x] Configurer la protection de `develop` :
   - Require PR
   - Require CI to pass
 
 ### GitHub Project
-- [ ] Créer le Project Board "Demandes de Maintenance"
-- [ ] Configurer les colonnes : Backlog | Sprint | In Progress | Review | Done
-- [ ] Activer les automations (move to In Progress on PR, etc.)
+- [x] Créer le Project Board "Demandes de Maintenance"
+- [x] Configurer les colonnes : Backlog | Sprint | In Progress | Review | Done
+- [x] Activer les automations (move to In Progress on PR, etc.)
 
 ### CI/CD
-- [ ] Vérifier que le workflow CI fonctionne
-- [ ] Créer une PR de test pour valider le pipeline
-- [ ] Configurer GitHub Copilot pour les PR (si disponible)
+- [x] Vérifier que le workflow CI fonctionne
+- [x] Créer une PR de test pour valider le pipeline
+- [x] Configurer GitHub Copilot pour les PR (si disponible)
 
 ## 📁 Fichiers concernés
 - `.github/workflows/ci.yml`
@@ -100,11 +100,11 @@ Créer le repository `demandes-maintenance` à partir du template Beneteau et co
 - `.github/CODEOWNERS` (optionnel)
 
 ## ✅ Definition of Done
-- [ ] Repo `demandes-maintenance` accessible sur GitHub
-- [ ] Branches `main` et `develop` protégées
-- [ ] GitHub Project créé avec colonnes
-- [ ] CI passe sur une PR de test
-- [ ] README mis à jour avec le nom du projet
+- [x] Repo `demandes-maintenance` accessible sur GitHub
+- [x] Branches `main` et `develop` protégées
+- [x] GitHub Project créé avec colonnes
+- [x] CI passe sur une PR de test
+- [x] README mis à jour avec le nom du projet
 
 ## ⏱️ Estimation
 1 jour (Jour 1)
@@ -131,31 +131,31 @@ Documenter le schéma complet de la base de données `WF_Demandes_Maintenance` e
 ## 📋 Tâches
 
 ### Documentation schéma
-- [ ] Lister toutes les tables avec leurs champs
-- [ ] Documenter les relations entre tables
-- [ ] Identifier les champs obligatoires vs optionnels
-- [ ] Documenter le workflow de validation (champs concernés)
+- [x] Lister toutes les tables avec leurs champs
+- [x] Documenter les relations entre tables
+- [x] Identifier les champs obligatoires vs optionnels
+- [x] Documenter le workflow de validation (champs concernés)
 
 ### Types TypeScript
-- [ ] Créer `src/core/types/database.types.ts`
-- [ ] Type `Demande` (40+ champs)
-- [ ] Type `Demandeur`
-- [ ] Type `Gestionnaire`
-- [ ] Type `Decideur`
-- [ ] Type `ValideurUnite`
-- [ ] Type `Administrateur`
-- [ ] Type `SiteService`
-- [ ] Type `TypeDemande`
-- [ ] Type `Budget`
+- [x] Créer `src/core/types/database.types.ts`
+- [x] Type `Demande` (40+ champs)
+- [x] Type `Demandeur`
+- [x] Type `Gestionnaire`
+- [x] Type `Decideur`
+- [x] Type `ValideurUnite`
+- [x] Type `Administrateur`
+- [x] Type `SiteService`
+- [x] Type `TypeDemande`
+- [x] Type `Budget`
 
 ### Connexion BDD
-- [ ] Vérifier la connexion Azure SQL
-- [ ] Tester avec le script `pnpm db:connect`
-- [ ] Documenter les variables d'environnement nécessaires
+- [x] Vérifier la connexion Azure SQL
+- [x] Tester avec le script `pnpm db:connect`
+- [x] Documenter les variables d'environnement nécessaires
 
 ### Seed data (optionnel)
-- [ ] Créer script `scripts/seed-local-db.ts`
-- [ ] Insérer des données de test pour développement local
+- [x] Créer script `scripts/seed-local-db.ts`
+- [x] Insérer des données de test pour développement local
 
 ## 📁 Fichiers à créer/modifier
 - `docs/planning/DATABASE.md` (nouveau)
@@ -164,10 +164,10 @@ Documenter le schéma complet de la base de données `WF_Demandes_Maintenance` e
 - `.env.example` (documenter les variables BDD)
 
 ## ✅ Definition of Done
-- [ ] DATABASE.md créé avec schéma complet
-- [ ] Tous les types TypeScript créés (9 tables)
-- [ ] `pnpm db:connect` fonctionne
-- [ ] PR mergée dans `develop`
+- [x] DATABASE.md créé avec schéma complet
+- [x] Tous les types TypeScript créés (9 tables)
+- [x] `pnpm db:connect` fonctionne
+- [x] PR mergée dans `develop`
 
 ## ⏱️ Estimation
 1-2 jours (Jour 2-3)
@@ -378,31 +378,31 @@ Utiliser le document [SPRINT_ROADMAP.md](./SPRINT_ROADMAP.md) pour le contenu de
 ## ✅ Checklist "Ready for Sprint 1"
 
 ### Infrastructure
-- [ ] Repo `demandes-maintenance` créé et accessible
-- [ ] Branches `main` et `develop` configurées et protégées
-- [ ] CI/CD fonctionne (lint, type-check, build)
-- [ ] GitHub Project créé avec les 8 issues
+- [x] Repo `demandes-maintenance` créé et accessible
+- [x] Branches `main` et `develop` configurées et protégées
+- [x] CI/CD fonctionne (lint, type-check, build)
+- [x] GitHub Project créé avec les 8 issues
 
 ### Base de données
-- [ ] DATABASE.md créé avec schéma complet
-- [ ] Types TypeScript pour les 9 tables
-- [ ] Connexion Azure SQL testée
-- [ ] Variables d'environnement documentées
+- [x] DATABASE.md créé avec schéma complet
+- [x] Types TypeScript pour les 9 tables
+- [x] Connexion Azure SQL testée
+- [x] Variables d'environnement documentées
 
 ### Authentification
-- [ ] Login/logout Azure AD fonctionnels
-- [ ] Hook `useCurrentUser()` prêt
-- [ ] Middleware protection routes prêt
+- [x] Login/logout Azure AD fonctionnels
+- [x] Hook `useCurrentUser()` prêt
+- [x] Middleware protection routes prêt
 
 ### UI/Design System
-- [ ] Storybook fonctionne avec tous les composants
-- [ ] Palette couleurs définie
-- [ ] Guide UI documenté
+- [x] Storybook fonctionne avec tous les composants
+- [x] Palette couleurs définie
+- [x] Guide UI documenté
 
 ### Organisation
-- [ ] 8 issues créées et dans le backlog
-- [ ] Romain sait exactement quoi faire en Sprint 1
-- [ ] Marie sait exactement quoi faire en Sprint 5
+- [x] 8 issues créées et dans le backlog
+- [x] Romain sait exactement quoi faire en Sprint 1
+- [x] Marie sait exactement quoi faire en Sprint 5
 
 ---
 
