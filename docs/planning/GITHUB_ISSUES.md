@@ -12,11 +12,14 @@ Ce document contient toutes les issues à créer sur GitHub pour les sprints de 
 **Assignee** : Romain
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Finaliser la configuration Azure AD et s'assurer que NextAuth fonctionne correctement en production.
 
 ## 📋 Tâches
+
 - [ ] Demander la création d'une App Registration dédiée aux ops
 - [ ] Configurer les redirect URIs (dev + prod)
 - [ ] Tester le flow complet login/logout
@@ -24,18 +27,21 @@ Finaliser la configuration Azure AD et s'assurer que NextAuth fonctionne correct
 - [ ] Documenter la configuration finale
 
 ## 📁 Fichiers concernés
+
 - `src/app/api/auth/[...nextauth]/route.ts`
 - `auth.config.ts`
 - `.env` (production)
 - `docs/AUTH.md`
 
 ## ✅ Definition of Done
+
 - [ ] App Registration dédiée créée
 - [ ] Login/logout fonctionnent en prod
 - [ ] Tokens correctement récupérés
 - [ ] Documentation à jour
 
 ## ⏱️ Estimation
+
 0.5 jour
 ```
 
@@ -47,11 +53,14 @@ Finaliser la configuration Azure AD et s'assurer que NextAuth fonctionne correct
 **Assignee** : Romain
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Créer le layout principal de l'application avec Header, contenu et footer.
 
 ## 📋 Tâches
+
 - [ ] Créer le layout de base (Header/Content/Footer)
 - [ ] Intégrer le Header existant
 - [ ] Ajouter le container principal responsive
@@ -59,17 +68,20 @@ Créer le layout principal de l'application avec Header, contenu et footer.
 - [ ] Ajouter le footer avec infos projet
 
 ## 📁 Fichiers concernés
+
 - `src/app/layout.tsx` (déjà existant, à affiner)
 - `src/components/templates/MainLayout/index.tsx` (nouveau)
 - `src/components/organisms/Footer/index.tsx` (nouveau)
 
 ## ✅ Definition of Done
+
 - [ ] Layout responsive (mobile/tablet/desktop)
 - [ ] Header s'affiche correctement
 - [ ] Footer avec version et infos
 - [ ] Structure réutilisable pour toutes les pages
 
 ## ⏱️ Estimation
+
 0.5 jour
 ```
 
@@ -81,11 +93,14 @@ Créer le layout principal de l'application avec Header, contenu et footer.
 **Assignee** : Romain
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Créer un système de navigation qui s'adapte au rôle de l'utilisateur connecté.
 
 ## 📋 Tâches
+
 - [ ] Créer le composant Navigation
 - [ ] Définir les menus par rôle (Demandeur/Gestionnaire/Admin)
 - [ ] Intégrer NavigationMenu Radix UI
@@ -94,36 +109,43 @@ Créer un système de navigation qui s'adapte au rôle de l'utilisateur connect�
 - [ ] Mode mobile (hamburger menu)
 
 ## 📁 Fichiers concernés
+
 - `src/components/organisms/Navigation/index.tsx` (nouveau)
 - `src/components/organisms/Header/index.tsx` (mise à jour)
 - `src/config/navigation.ts` (nouveau - config des menus)
 
 ## Menus par rôle
+
 ### Demandeur
+
 - Accueil
 - Mes demandes
 - Nouvelle demande
 
 ### Gestionnaire
+
 - Accueil
 - À valider
 - Toutes les demandes
 
 ### Admin
+
 - Accueil
 - Administration
-  - Sites/Services
-  - Types de demande
-  - Budgets
-  - Utilisateurs
+    - Sites/Services
+    - Types de demande
+    - Budgets
+    - Utilisateurs
 
 ## ✅ Definition of Done
+
 - [ ] Navigation s'adapte au rôle
 - [ ] Responsive (desktop + mobile)
 - [ ] Item actif mis en surbrillance
 - [ ] Icônes claires et cohérentes
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -135,11 +157,14 @@ Créer un système de navigation qui s'adapte au rôle de l'utilisateur connect�
 **Assignee** : Romain
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Protéger les routes privées avec un middleware NextAuth et rediriger les utilisateurs non connectés.
 
 ## 📋 Tâches
+
 - [ ] Affiner le middleware existant (`src/middleware.ts`)
 - [ ] Définir les routes publiques vs privées
 - [ ] Redirection vers `/test-auth` si non connecté
@@ -147,26 +172,31 @@ Protéger les routes privées avec un middleware NextAuth et rediriger les utili
 - [ ] Gestion des rôles (optionnel pour Sprint 1)
 
 ## 📁 Fichiers concernés
+
 - `src/middleware.ts` (déjà créé, à affiner)
 - `src/config/routes.ts` (nouveau - config des routes)
 
 ## Routes publiques
+
 - `/test-auth`
 - `/api/auth/*`
 
 ## Routes privées
+
 - `/` (accueil)
 - `/demandes/*`
 - `/admin/*`
 - `/validation/*`
 
 ## ✅ Definition of Done
+
 - [ ] Routes privées protégées
 - [ ] Redirection automatique si non connecté
 - [ ] Callback vers page demandée après login
 - [ ] Tests manuels OK
 
 ## ⏱️ Estimation
+
 0.5 jour
 ```
 
@@ -178,11 +208,14 @@ Protéger les routes privées avec un middleware NextAuth et rediriger les utili
 **Assignee** : Romain
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Améliorer le hook useCurrentUser pour récupérer aussi le rôle depuis la BDD.
 
 ## 📋 Tâches
+
 - [ ] Hook useCurrentUser déjà créé ✅
 - [ ] Créer une API route pour récupérer le rôle `/api/user/role`
 - [ ] Interroger la BDD pour trouver le rôle (Demandeur, Gestionnaire, etc.)
@@ -190,12 +223,14 @@ Améliorer le hook useCurrentUser pour récupérer aussi le rôle depuis la BDD.
 - [ ] Créer un Context Provider pour le user global
 
 ## 📁 Fichiers concernés
+
 - `src/hooks/useCurrentUser.ts` (mise à jour)
 - `src/app/api/user/role/route.ts` (nouveau)
 - `src/contexts/UserContext.tsx` (nouveau)
 - `src/core/services/user.service.ts` (nouveau)
 
 ## Logique de détermination du rôle
+
 1. Chercher l'email dans `Administrateur` → rôle: Admin
 2. Sinon chercher dans `Gestionnaire` → rôle: Gestionnaire
 3. Sinon chercher dans `Decideur` → rôle: Decideur
@@ -204,12 +239,14 @@ Améliorer le hook useCurrentUser pour récupérer aussi le rôle depuis la BDD.
 6. Sinon → rôle: null (non autorisé)
 
 ## ✅ Definition of Done
+
 - [ ] useCurrentUser retourne le rôle
 - [ ] Rôle récupéré depuis la BDD
 - [ ] Context Provider créé
 - [ ] Tests avec différents utilisateurs
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -223,11 +260,14 @@ Améliorer le hook useCurrentUser pour récupérer aussi le rôle depuis la BDD.
 **Assignee** : Romain
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Créer la page d'accueil avec présentation et actions rapides.
 
 ## 📋 Tâches
+
 - [ ] Créer `src/app/page.tsx` (déjà existe, à enrichir)
 - [ ] Section Hero avec titre et description
 - [ ] Cards d'actions rapides selon le rôle
@@ -235,25 +275,31 @@ Créer la page d'accueil avec présentation et actions rapides.
 - [ ] Animations subtiles (fade-in)
 
 ## Actions rapides par rôle
+
 ### Demandeur
+
 - Créer une demande
 - Voir mes demandes
 
 ### Gestionnaire
+
 - Demandes à valider
 - Toutes les demandes
 
 ### Admin
+
 - Administration
 - Statistiques globales
 
 ## ✅ Definition of Done
+
 - [ ] Page accueil responsive
 - [ ] Actions adaptées au rôle
 - [ ] Design cohérent avec UI Guide
 - [ ] Animations fluides
 
 ## ⏱️ Estimation
+
 0.5 jour
 ```
 
@@ -265,11 +311,14 @@ Créer la page d'accueil avec présentation et actions rapides.
 **Assignee** : Romain
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Créer le dashboard pour les demandeurs avec leurs demandes récentes.
 
 ## 📋 Tâches
+
 - [ ] Créer `src/app/dashboard/demandeur/page.tsx`
 - [ ] Composant StatCard (réutilisable)
 - [ ] Afficher stats : Total, En attente, Validées, Refusées
@@ -277,18 +326,21 @@ Créer le dashboard pour les demandeurs avec leurs demandes récentes.
 - [ ] Graphique simple (optionnel)
 
 ## Statistiques à afficher
+
 - Total de mes demandes
 - En attente
 - Validées
 - Refusées
 
 ## ✅ Definition of Done
+
 - [ ] Stats calculées depuis BDD
 - [ ] Liste des dernières demandes
 - [ ] Liens cliquables vers détails
 - [ ] Design cohérent
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -300,11 +352,14 @@ Créer le dashboard pour les demandeurs avec leurs demandes récentes.
 **Assignee** : Romain
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Créer le dashboard pour les gestionnaires avec les demandes à valider.
 
 ## 📋 Tâches
+
 - [ ] Créer `src/app/dashboard/gestionnaire/page.tsx`
 - [ ] Stats : À valider, Validées aujourd'hui, Refusées
 - [ ] Liste des demandes en attente de validation
@@ -312,18 +367,21 @@ Créer le dashboard pour les gestionnaires avec les demandes à valider.
 - [ ] Boutons d'action rapide
 
 ## Statistiques
+
 - Demandes en attente de validation
 - Validées cette semaine
 - Refusées cette semaine
 - Délai moyen de traitement
 
 ## ✅ Definition of Done
+
 - [ ] Dashboard fonctionnel
 - [ ] Stats pertinentes
 - [ ] Actions rapides (valider/refuser)
 - [ ] Filtres fonctionnels
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -335,11 +393,14 @@ Créer le dashboard pour les gestionnaires avec les demandes à valider.
 **Assignee** : Romain
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Créer le dashboard admin avec vue globale du système.
 
 ## 📋 Tâches
+
 - [ ] Créer `src/app/dashboard/admin/page.tsx`
 - [ ] Stats globales (toutes demandes)
 - [ ] Répartition par statut (graphique)
@@ -348,6 +409,7 @@ Créer le dashboard admin avec vue globale du système.
 - [ ] Liens vers administration
 
 ## Statistiques globales
+
 - Total demandes (tous utilisateurs)
 - Par statut (En attente, Validé, Refusé)
 - Par site
@@ -355,12 +417,14 @@ Créer le dashboard admin avec vue globale du système.
 - Tendance sur 30 jours
 
 ## ✅ Definition of Done
+
 - [ ] Vue globale complète
 - [ ] Graphiques clairs
 - [ ] Liens vers admin
 - [ ] Performance optimisée
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -372,11 +436,14 @@ Créer le dashboard admin avec vue globale du système.
 **Assignee** : Romain
 
 **Description** :
-```markdown
+
+````markdown
 ## 🎯 Objectif
+
 Créer un composant de carte statistique réutilisable pour tous les dashboards.
 
 ## 📋 Tâches
+
 - [ ] Créer `src/components/molecules/StatCard/index.tsx`
 - [ ] Props : title, value, icon, color, trend (optionnel)
 - [ ] Variantes de couleurs
@@ -384,29 +451,34 @@ Créer un composant de carte statistique réutilisable pour tous les dashboards.
 - [ ] Storybook story
 
 ## Props
+
 ```ts
 interface StatCardProps {
-  title: string;
-  value: number | string;
-  icon?: React.ReactNode;
-  color?: 'blue' | 'green' | 'red' | 'yellow';
-  trend?: {
-    value: number;
-    direction: 'up' | 'down';
-  };
-  onClick?: () => void;
+    title: string;
+    value: number | string;
+    icon?: React.ReactNode;
+    color?: "blue" | "green" | "red" | "yellow";
+    trend?: {
+        value: number;
+        direction: "up" | "down";
+    };
+    onClick?: () => void;
 }
 ```
+````
 
 ## ✅ Definition of Done
+
 - [ ] Composant créé et typé
 - [ ] Story Storybook
 - [ ] Responsive
 - [ ] Réutilisable dans tous dashboards
 
 ## ⏱️ Estimation
+
 0.5 jour
-```
+
+````
 
 ---
 
@@ -414,7 +486,7 @@ interface StatCardProps {
 
 ### [S3-1] Page Admin Sites/Services
 
-**Labels** : `sprint-3`, `admin`, `crud`  
+**Labels** : `sprint-3`, `admin`, `crud`
 **Assignee** : Romain
 
 **Description** :
@@ -444,7 +516,7 @@ Créer la page d'administration des Sites et Services avec CRUD complet.
 
 ## ⏱️ Estimation
 1 jour
-```
+````
 
 ---
 
@@ -454,11 +526,14 @@ Créer la page d'administration des Sites et Services avec CRUD complet.
 **Assignee** : Romain
 
 **Description** :
-```markdown
+
+````markdown
 ## 🎯 Objectif
+
 Créer la modale de création et d'édition d'un site/service.
 
 ## 📋 Tâches
+
 - [ ] Créer composant Dialog (Radix UI)
 - [ ] Formulaire avec react-hook-form
 - [ ] Validation avec Zod
@@ -466,30 +541,36 @@ Créer la modale de création et d'édition d'un site/service.
 - [ ] Messages de succès/erreur (toast)
 
 ## Champs du formulaire
+
 - Nom du site (requis, max 50 caractères)
 
 ## Validation Zod
+
 ```ts
 const siteSchema = z.object({
-  nom: z.string().min(1).max(50)
+    nom: z.string().min(1).max(50),
 });
 ```
+````
 
 ## ✅ Definition of Done
+
 - [ ] Création fonctionne
 - [ ] Modification fonctionne
 - [ ] Validation correcte
 - [ ] Messages utilisateur clairs
 
 ## ⏱️ Estimation
+
 1 jour
-```
+
+````
 
 ---
 
 ### [S3-3] Suppression Site avec Confirmation
 
-**Labels** : `sprint-3`, `admin`, `crud`  
+**Labels** : `sprint-3`, `admin`, `crud`
 **Assignee** : Romain
 
 **Description** :
@@ -517,7 +598,7 @@ Permettre la suppression d'un site avec dialogue de confirmation.
 
 ## ⏱️ Estimation
 0.5 jour
-```
+````
 
 ---
 
@@ -527,11 +608,14 @@ Permettre la suppression d'un site avec dialogue de confirmation.
 **Assignee** : Romain
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Créer la page d'administration des Types de demande (même structure que Sites).
 
 ## 📋 Tâches
+
 - [ ] Créer `src/app/admin/types/page.tsx`
 - [ ] DataTable liste types
 - [ ] Modal création/édition
@@ -539,17 +623,20 @@ Créer la page d'administration des Types de demande (même structure que Sites)
 - [ ] Réutiliser composants de Sites
 
 ## Colonnes
+
 - ID
 - Nom du type
 - Date création
 - Actions
 
 ## ✅ Definition of Done
+
 - [ ] CRUD complet
 - [ ] Même UX que Sites
 - [ ] Code réutilisé
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -561,11 +648,14 @@ Créer la page d'administration des Types de demande (même structure que Sites)
 **Assignee** : Romain
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Créer toutes les Server Actions pour les opérations CRUD Sites et Types.
 
 ## 📋 Tâches
+
 - [ ] `createSite(data)` - INSERT
 - [ ] `updateSite(id, data)` - UPDATE
 - [ ] `deleteSite(id)` - DELETE
@@ -574,18 +664,21 @@ Créer toutes les Server Actions pour les opérations CRUD Sites et Types.
 - [ ] `deleteType(id)` - DELETE
 
 ## Fichiers
+
 - `src/app/admin/sites/actions.ts`
 - `src/app/admin/types/actions.ts`
 - `src/core/services/sites.service.ts`
 - `src/core/services/types.service.ts`
 
 ## ✅ Definition of Done
+
 - [ ] Toutes actions créées
 - [ ] Gestion d'erreurs
 - [ ] Transactions si nécessaire
 - [ ] Logs appropriés
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -599,11 +692,14 @@ Créer toutes les Server Actions pour les opérations CRUD Sites et Types.
 **Assignee** : Romain
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Page d'administration des budgets avec CRUD complet.
 
 ## 📋 Tâches
+
 - [ ] Page `src/app/admin/budgets/page.tsx`
 - [ ] DataTable budgets
 - [ ] Modal création/édition
@@ -611,17 +707,20 @@ Page d'administration des budgets avec CRUD complet.
 - [ ] Réutiliser pattern de Sprint 3
 
 ## Colonnes
+
 - ID
 - Nom du budget
 - Date création
 - Actions
 
 ## ✅ Definition of Done
+
 - [ ] CRUD complet budgets
 - [ ] UX cohérente
 - [ ] Performance OK
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -633,11 +732,14 @@ Page d'administration des budgets avec CRUD complet.
 **Assignee** : Romain
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Gérer les utilisateurs Demandeurs.
 
 ## 📋 Tâches
+
 - [ ] Page `src/app/admin/users/demandeurs/page.tsx`
 - [ ] DataTable avec Nom, Prénom, Email, Actif
 - [ ] Création/édition demandeur
@@ -645,6 +747,7 @@ Gérer les utilisateurs Demandeurs.
 - [ ] Recherche par nom/email
 
 ## Champs formulaire
+
 - Prénom (requis)
 - Nom (requis)
 - Email (requis, format email, unique)
@@ -652,11 +755,13 @@ Gérer les utilisateurs Demandeurs.
 - Fullname (auto-généré)
 
 ## ✅ Definition of Done
+
 - [ ] CRUD demandeurs
 - [ ] Toggle actif/inactif
 - [ ] Validation email unique
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -668,20 +773,25 @@ Gérer les utilisateurs Demandeurs.
 **Assignee** : Romain
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Gérer les utilisateurs Gestionnaires (même structure que Demandeurs).
 
 ## 📋 Tâches
+
 - [ ] Page `src/app/admin/users/gestionnaires/page.tsx`
 - [ ] Même structure que Demandeurs
 - [ ] Champs : Prénom, Nom, Email, Mail (doublon?), Fullname, Actif
 
 ## ✅ Definition of Done
+
 - [ ] CRUD gestionnaires
 - [ ] Même UX que demandeurs
 
 ## ⏱️ Estimation
+
 0.5 jour
 ```
 
@@ -693,22 +803,27 @@ Gérer les utilisateurs Gestionnaires (même structure que Demandeurs).
 **Assignee** : Romain
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Gérer Décideurs et Valideurs Unité.
 
 ## 📋 Tâches
+
 - [ ] Page décideurs
 - [ ] Page valideurs unité (max 4 valideurs)
 - [ ] Même structure que gestionnaires
 - [ ] Validation : max 4 valideurs unité
 
 ## ✅ Definition of Done
+
 - [ ] CRUD décideurs
 - [ ] CRUD valideurs (limite 4)
 - [ ] Message si limite atteinte
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -720,21 +835,26 @@ Gérer Décideurs et Valideurs Unité.
 **Assignee** : Romain
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Gérer les administrateurs système.
 
 ## 📋 Tâches
+
 - [ ] Page administrateurs
 - [ ] Validation : ne peut pas se supprimer soi-même
 - [ ] Au moins 1 admin requis dans le système
 
 ## ✅ Definition of Done
+
 - [ ] CRUD admins
 - [ ] Protections en place
 - [ ] Impossible de tout supprimer
 
 ## ⏱️ Estimation
+
 0.5 jour
 ```
 
@@ -746,11 +866,14 @@ Gérer les administrateurs système.
 **Assignee** : Romain
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Extraire un composant DataTable générique réutilisable.
 
 ## 📋 Tâches
+
 - [ ] Créer `src/components/organisms/DataTable/index.tsx`
 - [ ] Props génériques (columns, data, actions)
 - [ ] Tri par colonne
@@ -759,12 +882,14 @@ Extraire un composant DataTable générique réutilisable.
 - [ ] Storybook story
 
 ## ✅ Definition of Done
+
 - [ ] Composant générique
 - [ ] Utilisé dans toutes pages admin
 - [ ] Performance OK (>1000 lignes)
 - [ ] Story complète
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -778,11 +903,14 @@ Extraire un composant DataTable générique réutilisable.
 **Assignee** : Marie
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Créer le formulaire de création de demande (partie 1 : champs de base).
 
 ## 📋 Tâches
+
 - [ ] Page `src/app/demandes/new/page.tsx`
 - [ ] Formulaire react-hook-form
 - [ ] Champs : Titre, Description, Délai souhaité
@@ -790,17 +918,20 @@ Créer le formulaire de création de demande (partie 1 : champs de base).
 - [ ] Design multi-étapes (wizard)
 
 ## Champs partie 1
+
 - Titre (requis, max 200)
 - Description (requis, textarea)
 - Délai souhaité (date)
 - Commentaire délai
 
 ## ✅ Definition of Done
+
 - [ ] Formulaire responsive
 - [ ] Validation temps réel
 - [ ] UX fluide
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -812,11 +943,14 @@ Créer le formulaire de création de demande (partie 1 : champs de base).
 **Assignee** : Marie
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Compléter le formulaire avec les sélections (Site, Type, Budget, etc.).
 
 ## 📋 Tâches
+
 - [ ] Dropdowns : Site, Type, Budget
 - [ ] Dropdown : Gestionnaire assigné
 - [ ] Prix indicatif
@@ -824,6 +958,7 @@ Compléter le formulaire avec les sélections (Site, Type, Budget, etc.).
 - [ ] Validation complète
 
 ## Champs partie 2
+
 - Site/Service (select, requis)
 - Type de demande (select, requis)
 - Budget (select, requis)
@@ -832,11 +967,13 @@ Compléter le formulaire avec les sélections (Site, Type, Budget, etc.).
 - Études rentabilité (textarea)
 
 ## ✅ Definition of Done
+
 - [ ] Tous champs intégrés
 - [ ] Dropdowns chargés depuis BDD
 - [ ] Validation complète
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -848,11 +985,14 @@ Compléter le formulaire avec les sélections (Site, Type, Budget, etc.).
 **Assignee** : Marie
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Créer la Server Action pour enregistrer une demande en BDD.
 
 ## 📋 Tâches
+
 - [ ] `createDemande(data)` server action
 - [ ] Générer le numéro MNTSE unique
 - [ ] Définir le statut initial "En attente"
@@ -861,16 +1001,19 @@ Créer la Server Action pour enregistrer une demande en BDD.
 - [ ] Notifications (optionnel)
 
 ## Fichiers
+
 - `src/app/demandes/new/actions.ts`
 - `src/core/services/demandes.service.ts`
 
 ## ✅ Definition of Done
+
 - [ ] Demande créée en BDD
 - [ ] Numéro MNTSE unique
 - [ ] Statut correct
 - [ ] Gestion d'erreurs
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -882,11 +1025,14 @@ Créer la Server Action pour enregistrer une demande en BDD.
 **Assignee** : Marie
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Permettre l'upload de pièces jointes lors de la création.
 
 ## 📋 Tâches
+
 - [ ] Composant upload fichier
 - [ ] Validation (taille, type)
 - [ ] Upload vers Azure Blob Storage (ou local en dev)
@@ -895,17 +1041,20 @@ Permettre l'upload de pièces jointes lors de la création.
 - [ ] Suppression fichier
 
 ## Contraintes
+
 - Max 10 MB par fichier
 - Types : PDF, Images, Word, Excel
 - Max 5 fichiers par demande
 
 ## ✅ Definition of Done
+
 - [ ] Upload fonctionne
 - [ ] Validation correcte
 - [ ] Fichiers associés à la demande
 - [ ] Liste affichée
 
 ## ⏱️ Estimation
+
 1.5 jour
 ```
 
@@ -917,11 +1066,14 @@ Permettre l'upload de pièces jointes lors de la création.
 **Assignee** : Marie
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Affiner la validation et les messages utilisateur du formulaire.
 
 ## 📋 Tâches
+
 - [ ] Messages d'erreur clairs par champ
 - [ ] Toast de succès après création
 - [ ] Loader pendant l'enregistrement
@@ -929,11 +1081,13 @@ Affiner la validation et les messages utilisateur du formulaire.
 - [ ] Redirection vers détail demande
 
 ## ✅ Definition of Done
+
 - [ ] UX fluide et intuitive
 - [ ] Messages clairs
 - [ ] Pas de perte de données
 
 ## ⏱️ Estimation
+
 0.5 jour
 ```
 
@@ -947,11 +1101,14 @@ Affiner la validation et les messages utilisateur du formulaire.
 **Assignee** : Marie
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Créer la page listant toutes les demandes de l'utilisateur connecté.
 
 ## 📋 Tâches
+
 - [ ] Page `src/app/demandes/page.tsx`
 - [ ] DataTable avec colonnes : Numéro, Titre, Statut, Date, Actions
 - [ ] Filtres : Statut, Date, Type, Site
@@ -960,6 +1117,7 @@ Créer la page listant toutes les demandes de l'utilisateur connecté.
 - [ ] Pagination
 
 ## Colonnes
+
 - Numéro MNTSE
 - Titre
 - Statut (badge coloré)
@@ -969,12 +1127,14 @@ Créer la page listant toutes les demandes de l'utilisateur connecté.
 - Actions (Voir détail)
 
 ## ✅ Definition of Done
+
 - [ ] Liste complète affichée
 - [ ] Filtres fonctionnels
 - [ ] Recherche OK
 - [ ] Performance <500ms
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -986,11 +1146,14 @@ Créer la page listant toutes les demandes de l'utilisateur connecté.
 **Assignee** : Marie
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Afficher tous les détails d'une demande.
 
 ## 📋 Tâches
+
 - [ ] Page `src/app/demandes/[id]/page.tsx`
 - [ ] Affichage de tous les champs
 - [ ] Informations demandeur
@@ -999,6 +1162,7 @@ Afficher tous les détails d'une demande.
 - [ ] Bouton Modifier (si statut permet)
 
 ## Sections
+
 1. Informations générales
 2. Détails techniques
 3. Validations
@@ -1006,12 +1170,14 @@ Afficher tous les détails d'une demande.
 5. Commentaires
 
 ## ✅ Definition of Done
+
 - [ ] Toutes infos affichées
 - [ ] Design clair et lisible
 - [ ] Historique visible
 - [ ] PJ téléchargeables
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -1023,11 +1189,14 @@ Afficher tous les détails d'une demande.
 **Assignee** : Marie
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Créer un composant Timeline pour afficher l'historique des validations.
 
 ## 📋 Tâches
+
 - [ ] Composant `Timeline`
 - [ ] Afficher : Date, Valideur, Action, Commentaire
 - [ ] Icônes par type (✓, ✗, ⏳)
@@ -1035,6 +1204,7 @@ Créer un composant Timeline pour afficher l'historique des validations.
 - [ ] Design vertical responsive
 
 ## Événements à afficher
+
 - Création demande
 - Validation gestionnaire (✓/✗)
 - Validation décideur (✓/✗)
@@ -1042,12 +1212,14 @@ Créer un composant Timeline pour afficher l'historique des validations.
 - Abandon
 
 ## ✅ Definition of Done
+
 - [ ] Timeline claire
 - [ ] Icônes appropriées
 - [ ] Responsive
 - [ ] Réutilisable
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -1059,11 +1231,14 @@ Créer un composant Timeline pour afficher l'historique des validations.
 **Assignee** : Marie
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Permettre la modification d'une demande (si statut permet).
 
 ## 📋 Tâches
+
 - [ ] Page `src/app/demandes/[id]/edit/page.tsx`
 - [ ] Réutiliser formulaire de création
 - [ ] Pré-remplir avec données existantes
@@ -1071,15 +1246,18 @@ Permettre la modification d'une demande (si statut permet).
 - [ ] Server Action `updateDemande`
 
 ## Règles de modification
+
 - Autorisée si : En attente, Refusé, Abandonné
 - Interdite si : Validé (en cours ou complet)
 
 ## ✅ Definition of Done
+
 - [ ] Modification fonctionne
 - [ ] Règles respectées
 - [ ] Message si non modifiable
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -1091,11 +1269,14 @@ Permettre la modification d'une demande (si statut permet).
 **Assignee** : Marie
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Permettre l'export de la liste des demandes en CSV.
 
 ## 📋 Tâches
+
 - [ ] Bouton "Exporter CSV"
 - [ ] Génération fichier CSV côté client
 - [ ] Colonnes : Numéro, Titre, Statut, Site, Type, Date
@@ -1103,12 +1284,14 @@ Permettre l'export de la liste des demandes en CSV.
 - [ ] Nom fichier : demandes_YYYYMMDD.csv
 
 ## ✅ Definition of Done
+
 - [ ] Export fonctionne
 - [ ] CSV valide
 - [ ] Nom fichier approprié
 - [ ] Encodage UTF-8
 
 ## ⏱️ Estimation
+
 0.5 jour (optionnel)
 ```
 
@@ -1122,11 +1305,14 @@ Permettre l'export de la liste des demandes en CSV.
 **Assignee** : Marie
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Liste des demandes en attente de validation par le gestionnaire.
 
 ## 📋 Tâches
+
 - [ ] Page `src/app/validation/gestionnaire/page.tsx`
 - [ ] DataTable demandes en attente
 - [ ] Filtres : Site, Type, Date
@@ -1134,16 +1320,20 @@ Liste des demandes en attente de validation par le gestionnaire.
 - [ ] Bouton action rapide "Valider"
 
 ## Critères d'affichage
+
 Afficher les demandes où :
+
 - `Dem_Validation_Gestionnaire` = "En attente"
 - `Dem_Gestionnaire` = gestionnaire connecté (optionnel)
 
 ## ✅ Definition of Done
+
 - [ ] Liste correcte affichée
 - [ ] Filtres OK
 - [ ] Actions visibles
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -1155,11 +1345,14 @@ Afficher les demandes où :
 **Assignee** : Marie
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Page détaillée pour valider ou refuser une demande.
 
 ## 📋 Tâches
+
 - [ ] Page `src/app/validation/gestionnaire/[id]/page.tsx`
 - [ ] Affichage complet demande
 - [ ] Zone commentaire (requis si refus)
@@ -1168,23 +1361,28 @@ Page détaillée pour valider ou refuser une demande.
 - [ ] Server Action validation
 
 ## Actions
+
 **Valider** :
+
 - Met `Dem_Validation_Gestionnaire` = "Validé"
 - Met `Dem_Date_Validation_Gestionnaire` = NOW()
 - Met `Dem_Commentaire_Gestionnaire` = commentaire
 
 **Refuser** :
+
 - Met `Dem_Validation_Gestionnaire` = "Refusé"
 - Commentaire obligatoire
 - Met statut global = "Refusé"
 
 ## ✅ Definition of Done
+
 - [ ] Validation fonctionne
 - [ ] Refus fonctionne
 - [ ] Commentaire obligatoire si refus
 - [ ] Workflow correct
 
 ## ⏱️ Estimation
+
 1.5 jour
 ```
 
@@ -1196,11 +1394,14 @@ Page détaillée pour valider ou refuser une demande.
 **Assignee** : Marie
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Envoyer un email au demandeur après validation/refus.
 
 ## 📋 Tâches
+
 - [ ] Intégrer service email (Resend, SendGrid, ou SMTP)
 - [ ] Template email validation
 - [ ] Template email refus
@@ -1209,6 +1410,7 @@ Envoyer un email au demandeur après validation/refus.
 
 ## Contenu email validation
 ```
+
 Objet : Demande [Numéro] validée par le gestionnaire
 
 Bonjour [Nom],
@@ -1219,6 +1421,7 @@ Commentaire : [Commentaire]
 
 Cordialement,
 L'équipe Maintenance
+
 ```
 
 ## ✅ Definition of Done
@@ -1238,22 +1441,27 @@ L'équipe Maintenance
 **Assignee** : Marie
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Ajouter des statistiques sur le dashboard gestionnaire.
 
 ## 📋 Tâches
+
 - [ ] Compléter dashboard gestionnaire (S2-3)
 - [ ] Stats : Nb validées cette semaine, Nb refusées
 - [ ] Délai moyen de validation
 - [ ] Graphique évolution validations
 
 ## ✅ Definition of Done
+
 - [ ] Stats pertinentes
 - [ ] Calculs corrects
 - [ ] Graphique clair
 
 ## ⏱️ Estimation
+
 0.5 jour
 ```
 
@@ -1265,22 +1473,27 @@ Ajouter des statistiques sur le dashboard gestionnaire.
 **Assignee** : Marie
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Page historique des validations effectuées par le gestionnaire.
 
 ## 📋 Tâches
+
 - [ ] Page `src/app/validation/gestionnaire/history/page.tsx`
 - [ ] Liste des demandes traitées
 - [ ] Filtres : Validé/Refusé, Date
 - [ ] Export CSV
 
 ## ✅ Definition of Done
+
 - [ ] Historique complet
 - [ ] Filtres OK
 - [ ] Export fonctionne
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -1294,30 +1507,37 @@ Page historique des validations effectuées par le gestionnaire.
 **Assignee** : Marie
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Workflow de validation pour le décideur (niveau 2).
 
 ## 📋 Tâches
+
 - [ ] Page `src/app/validation/decideur/page.tsx`
 - [ ] Liste demandes où gestionnaire a validé
 - [ ] Page validation (même structure que gestionnaire)
 - [ ] Server Action validation décideur
 
 ## Critères d'affichage
+
 - `Dem_Validation_Gestionnaire` = "Validé"
 - `Dem_Validation_Decideur` = "En attente"
 
 ## Actions
+
 **Valider** : Met `Dem_Validation_Decideur` = "Validé"
 **Refuser** : Met `Dem_Validation_Decideur` = "Refusé" + statut global
 
 ## ✅ Definition of Done
+
 - [ ] Workflow décideur complet
 - [ ] Même UX que gestionnaire
 - [ ] Workflow correct
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -1329,17 +1549,21 @@ Workflow de validation pour le décideur (niveau 2).
 **Assignee** : Marie
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Gérer les 4 valideurs unité (validation niveau 3).
 
 ## 📋 Tâches
+
 - [ ] Page valideur unité
 - [ ] Logique : 4 validations séquentielles
 - [ ] Chaque valideur voit seulement ce qui le concerne
 - [ ] Server Actions pour chaque valideur
 
 ## Logique des 4 valideurs
+
 1. Valideur 1 valide → passe à Valideur 2
 2. Valideur 2 valide → passe à Valideur 3
 3. Valideur 3 valide → passe à Valideur 4
@@ -1348,15 +1572,18 @@ Gérer les 4 valideurs unité (validation niveau 3).
 Si un valideur refuse → statut global "Refusé"
 
 ## Champs BDD
+
 - `Dem_Valideur1` / `Dem_Validation_Valideur1` / `Dem_Date_Validation_Valideur1`
 - Idem pour Valideur 2, 3, 4
 
 ## ✅ Definition of Done
+
 - [ ] 4 validations séquentielles OK
 - [ ] Workflow correct
 - [ ] Refus bloque le processus
 
 ## ⏱️ Estimation
+
 2 jours
 ```
 
@@ -1368,17 +1595,21 @@ Si un valideur refuse → statut global "Refusé"
 **Assignee** : Marie
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Vue globale du workflow de validation pour les admins.
 
 ## 📋 Tâches
+
 - [ ] Page `src/app/workflow/page.tsx`
 - [ ] Schéma visuel du workflow
 - [ ] Stats par étape de validation
 - [ ] Demandes bloquées (highlights)
 
 ## Stats à afficher
+
 - En attente gestionnaire : X
 - En attente décideur : X
 - En attente valideurs unité : X
@@ -1386,11 +1617,13 @@ Vue globale du workflow de validation pour les admins.
 - Refusées : X
 
 ## ✅ Definition of Done
+
 - [ ] Vue globale claire
 - [ ] Schéma workflow compréhensible
 - [ ] Stats pertinentes
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -1402,11 +1635,14 @@ Vue globale du workflow de validation pour les admins.
 **Assignee** : Marie
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Envoyer des notifications à chaque étape du workflow.
 
 ## 📋 Tâches
+
 - [ ] Notifications après validation gestionnaire
 - [ ] Notifications après validation décideur
 - [ ] Notifications après chaque valideur unité
@@ -1414,17 +1650,20 @@ Envoyer des notifications à chaque étape du workflow.
 - [ ] In-app notifications (optionnel)
 
 ## Destinataires
+
 - Validation gestionnaire → Décideur + Demandeur
 - Validation décideur → Valideurs Unité + Demandeur
 - Validation valideur → Valideur suivant + Demandeur
 - Validation finale → Demandeur
 
 ## ✅ Definition of Done
+
 - [ ] Notifications à chaque étape
 - [ ] Emails envoyés
 - [ ] Logs corrects
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 
@@ -1436,11 +1675,14 @@ Envoyer des notifications à chaque étape du workflow.
 **Assignee** : Marie
 
 **Description** :
+
 ```markdown
 ## 🎯 Objectif
+
 Tester le workflow complet de bout en bout.
 
 ## 📋 Tâches
+
 - [ ] Test : Création → Validation complète
 - [ ] Test : Création → Refus gestionnaire
 - [ ] Test : Création → Refus décideur
@@ -1449,6 +1691,7 @@ Tester le workflow complet de bout en bout.
 - [ ] Corriger bugs identifiés
 
 ## Scénarios à tester
+
 1. Happy path : Tout validé
 2. Refus niveau 1
 3. Refus niveau 2
@@ -1456,11 +1699,13 @@ Tester le workflow complet de bout en bout.
 5. Modification après refus
 
 ## ✅ Definition of Done
+
 - [ ] Tous scénarios testés
 - [ ] Aucun bug bloquant
 - [ ] Workflow fluide
 
 ## ⏱️ Estimation
+
 1 jour
 ```
 

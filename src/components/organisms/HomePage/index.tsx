@@ -1,7 +1,14 @@
 "use client";
 
 import React from "react";
-import { PlusCircle, List, CheckSquare, Settings, LayoutDashboard, FileText } from "lucide-react";
+import {
+    PlusCircle,
+    List,
+    CheckSquare,
+    Settings,
+    LayoutDashboard,
+    FileText,
+} from "lucide-react";
 import { ActionCard } from "@/components/molecules/ActionCard";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 
@@ -26,16 +33,16 @@ export const HomePage: React.FC = () => {
             href: "/demandes/nouvelle",
             colorClassName: "text-blue-600",
             iconClassName: "bg-blue-50",
-            roles: ["demandeur", "admin"]
+            roles: ["demandeur", "admin"],
         },
         {
             title: "Mes demandes",
             description: "Suivre l'état de vos demandes en cours",
             icon: List,
-            href: "/my-requests",
+            href: "/dashboard/demandeur",
             colorClassName: "text-indigo-600",
             iconClassName: "bg-indigo-50",
-            roles: ["demandeur", "admin"]
+            roles: ["demandeur", "admin"],
         },
         {
             title: "À valider",
@@ -44,7 +51,7 @@ export const HomePage: React.FC = () => {
             href: "/gestionnaire/validation",
             colorClassName: "text-amber-600",
             iconClassName: "bg-amber-50",
-            roles: ["gestionnaire", "admin"]
+            roles: ["gestionnaire", "admin"],
         },
         {
             title: "Toutes les demandes",
@@ -53,7 +60,7 @@ export const HomePage: React.FC = () => {
             href: "/all-requests",
             colorClassName: "text-emerald-600",
             iconClassName: "bg-emerald-50",
-            roles: ["gestionnaire", "admin"]
+            roles: ["gestionnaire", "admin"],
         },
         {
             title: "Administration",
@@ -62,7 +69,7 @@ export const HomePage: React.FC = () => {
             href: "/admin",
             colorClassName: "text-slate-600",
             iconClassName: "bg-slate-50",
-            roles: ["admin"]
+            roles: ["admin"],
         },
         {
             title: "Guide Utilisateur",
@@ -71,8 +78,8 @@ export const HomePage: React.FC = () => {
             href: "/docs/user-guide",
             colorClassName: "text-rose-600",
             iconClassName: "bg-rose-50",
-            roles: ["all"]
-        }
+            roles: ["all"],
+        },
     ];
 
     return (
@@ -82,7 +89,8 @@ export const HomePage: React.FC = () => {
                     Bonjour, {name ?? "Utilisateur"}
                 </h1>
                 <p className="text-muted-foreground text-lg">
-                    Bienvenue sur votre espace de gestion des demandes de maintenance.
+                    Bienvenue sur votre espace de gestion des demandes de
+                    maintenance.
                 </p>
             </div>
 
