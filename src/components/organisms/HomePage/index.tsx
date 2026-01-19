@@ -39,7 +39,7 @@ export const HomePage: React.FC = () => {
             title: "Mes demandes",
             description: "Suivre l'état de vos demandes en cours",
             icon: List,
-            href: "/my-requests",
+            href: "/dashboard/demandeur",
             colorClassName: "text-indigo-600",
             iconClassName: "bg-indigo-50",
             roles: ["demandeur", "admin"],
