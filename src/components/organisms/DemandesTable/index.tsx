@@ -7,6 +7,8 @@ import DataTable, {
 } from "@/components/organisms/DataTable";
 import { Button } from "@/components/atoms/Button";
 
+type DemandeStatus = "En attente" | "Validé" | "Refusé" | "Abandonné";
+
 export interface Demande {
     demId: number;
     demTitre: string;
@@ -141,11 +143,11 @@ export default function DemandesTable({
             },
             {
                 key: "statut",
-                render: () => (
-                    <StatusBadge
-                        status={demande.demEtatDemande || "En attente"}
-                    />
-                ),
+                render: () => {
+                    const status = (demande.demEtatDemande ||
+                        "En attente") as DemandeStatus;
+                    return <StatusBadge status={status} />;
+                },
                 value: demande.demEtatDemande,
             },
             {
