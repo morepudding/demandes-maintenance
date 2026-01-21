@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { formatDate } from "@/utils/formatDate";
 import { StatusBadge } from "@/components/atoms/StatusBadge";
+import DataTable, {
+    DataTableColumnDefinition,
+    DataTableRow,
+} from "@/components/organisms/DataTable";
+import { Button } from "@/components/atoms/Button";
 
 export interface Demande {
     demId: number;
@@ -23,93 +28,167 @@ export default function DemandesTable({
     onRefuseClick,
     hasFilters = false,
 }: DemandesTableProps) {
+    // Column definitions with sorting and filtering
+    const columnsDefinition: { [key: string]: DataTableColumnDefinition } = {
+        reference: {
+            key: "reference",
+            order: 1,
+            name: "Référence",
+            sortable: true,
+            filterable: true,
+            filterType: "number",
+        },
+        titre: {
+            key: "titre",
+            order: 2,
+            name: "Titre",
+            sortable: true,
+            filterable: true,
+            filterType: "text",
+        },
+        site: {
+            key: "site",
+            order: 3,
+            name: "Site",
+            sortable: true,
+            filterable: true,
+            filterType: "text",
+        },
+        type: {
+            key: "type",
+            order: 4,
+            name: "Type",
+            sortable: true,
+            filterable: true,
+            filterType: "text",
+        },
+        demandeur: {
+            key: "demandeur",
+            order: 5,
+            name: "Demandeur",
+            sortable: true,
+            filterable: true,
+            filterType: "text",
+        },
+        date: {
+            key: "date",
+            order: 6,
+            name: "Date",
+            sortable: true,
+            filterable: false,
+        },
+        statut: {
+            key: "statut",
+            order: 7,
+            name: "Statut",
+            sortable: true,
+            filterable: true,
+            filterType: "text",
+        },
+        actions: {
+            key: "actions",
+            order: 8,
+            name: "Actions",
+            sortable: false,
+            filterable: false,
+        },
+    };
+
+    // Convert demandes to DataTable rows
+    const rows: DataTableRow[] = demandes.map((demande) => ({
+        key: `demande-${demande.demId}`,
+        cells: [
+            {
+                key: "reference",
+                render: () => (
+                    <span className="font-mono font-medium text-primary">
+                        #{demande.demId}
+                    </span>
+                ),
+                value: demande.demId,
+            },
+            {
+                key: "titre",
+                render: () => (
+                    <span className="font-medium truncate max-w-[200px] block">
+                        {demande.demTitre}
+                    </span>
+                ),
+                value: demande.demTitre,
+            },
+            {
+                key: "site",
+                value: demande.sitNom || "-",
+            },
+            {
+                key: "type",
+                value: demande.typNom || "-",
+            },
+            {
+                key: "demandeur",
+                value: demande.demCreeParLabele || "-",
+            },
+            {
+                key: "date",
+                render: () => (
+                    <span className="text-muted-foreground">
+                        {demande.demDateCreation
+                            ? formatDate(demande.demDateCreation)
+                            : "-"}
+                    </span>
+                ),
+                value: demande.demDateCreation,
+            },
+            {
+                key: "statut",
+                render: () => (
+                    <StatusBadge
+                        status={demande.demEtatDemande || "En attente"}
+                    />
+                ),
+                value: demande.demEtatDemande,
+            },
+            {
+                key: "actions",
+                render: () => (
+                    <div className="flex justify-end gap-2">
+                        <Link
+                            href={`/demandes/${demande.demId}/valider`}
+                            className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-primary text-primary-foreground shadow hover:bg-primary/90 h-8 px-3"
+                        >
+                            Valider
+                        </Link>
+                        <Button
+                            onClick={() => onRefuseClick(demande)}
+                            variant="ghost"
+                            size="sm"
+                        >
+                            Refuser
+                        </Button>
+                    </div>
+                ),
+                value: null,
+            },
+        ],
+    }));
+
+    if (demandes.length === 0) {
+        return (
+            <div className="text-center py-12 text-muted-foreground">
+                {hasFilters ? (
+                    <>Aucune demande à valider avec ces filtres.</>
+                ) : (
+                    <>Aucune demande en cours.</>
+                )}
+            </div>
+        );
+    }
+
     return (
-        <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-                <thead className="text-xs text-muted-foreground uppercase bg-slate-50 border-b border-border">
-                    <tr>
-                        <th className="px-6 py-4 font-medium">Référence</th>
-                        <th className="px-6 py-4 font-medium">Titre</th>
-                        <th className="px-6 py-4 font-medium">Site</th>
-                        <th className="px-6 py-4 font-medium">Type</th>
-                        <th className="px-6 py-4 font-medium">Demandeur</th>
-                        <th className="px-6 py-4 font-medium">Date</th>
-                        <th className="px-6 py-4 font-medium">Statut</th>
-                        <th className="px-6 py-4 font-medium text-right">
-                            Actions
-                        </th>
-                    </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                    {demandes.length > 0 ? (
-                        demandes.map((demande) => (
-                            <tr
-                                key={demande.demId}
-                                className="hover:bg-slate-50 transition-colors"
-                            >
-                                <td className="px-6 py-4 font-mono font-medium text-primary">
-                                    #{demande.demId}
-                                </td>
-                                <td className="px-6 py-4 font-medium truncate max-w-[200px]">
-                                    {demande.demTitre}
-                                </td>
-                                <td className="px-6 py-4 text-muted-foreground">
-                                    {demande.sitNom || "-"}
-                                </td>
-                                <td className="px-6 py-4 text-muted-foreground">
-                                    {demande.typNom || "-"}
-                                </td>
-                                <td className="px-6 py-4 text-muted-foreground">
-                                    {demande.demCreeParLabele || "-"}
-                                </td>
-                                <td className="px-6 py-4 text-muted-foreground">
-                                    {demande.demDateCreation
-                                        ? formatDate(demande.demDateCreation)
-                                        : "-"}
-                                </td>
-                                <td className="px-6 py-4">
-                                    <StatusBadge
-                                        status={
-                                            demande.demEtatDemande ||
-                                            "En attente"
-                                        }
-                                    />
-                                </td>
-                                <td className="px-6 py-4 text-right space-x-2">
-                                    <Link
-                                        href={`/demandes/${demande.demId}/valider`}
-                                        className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-primary text-primary-foreground shadow hover:bg-primary/90 h-8 px-3"
-                                    >
-                                        Valider
-                                    </Link>
-                                    <button
-                                        onClick={() => onRefuseClick(demande)}
-                                        className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground h-8 px-3"
-                                    >
-                                        Refuser
-                                    </button>
-                                </td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td
-                                colSpan={8}
-                                className="px-6 py-12 text-center text-muted-foreground"
-                            >
-                                {hasFilters ? (
-                                    <>
-                                        Aucune demande à valider avec ces
-                                        filtres.
-                                    </>
-                                ) : (
-                                    <>Aucune demande en cours.</>
-                                )}
-                            </td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
-        </div>
+        <DataTable
+            columnsDefinition={columnsDefinition}
+            rows={rows}
+            defaultPageSize={10}
+        />
     );
 }
