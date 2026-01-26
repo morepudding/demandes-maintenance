@@ -7,6 +7,7 @@ import {
 import {
     getGestionnaireDashboard,
     GestionnaireFilters,
+    rejectDemande,
 } from "@/core/services/validation.service";
 import {
     deleteType,
@@ -64,6 +65,18 @@ export const getGestionnaireDashboardDataAction = async (
     } catch (error) {
         console.error("Erreur récupération dashboard gestionnaire", error);
         throw error;
+    }
+};
+
+export const rejectDemandeAction = async (demandeId: number) => {
+    try {
+        await rejectDemande(demandeId);
+        return { success: true };
+    } catch (error) {
+        const errorMessage =
+            error instanceof Error ? error.message : "Erreur inconnue";
+        console.error("[rejectDemandeAction] Erreur:", errorMessage);
+        throw new Error(errorMessage);
     }
 };
 

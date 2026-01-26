@@ -73,6 +73,9 @@ export const getTypesStats = async (): Promise<TypeDemande> => {
         const result = await request.query(query);
 
         const stats = result.recordset[0];
+        if (!stats) {
+            return { id: 0, name: "" };
+        }
         return {
             id: stats.id || 0,
             name: stats.name || "",
@@ -148,15 +151,6 @@ export const checkTypeDependencies = async (
 
 export const deleteType = async (typeId: number): Promise<void> => {
     try {
-        // Vérifier les dépendances avant suppression
-        const dependencies = await checkTypeDependencies(typeId);
-
-        if (dependencies.hasDependencies) {
-            throw new Error(
-                `Impossible de supprimer ce type. ${dependencies.demandesCount} demande(s) l'utilisent actuellement.`,
-            );
-        }
-
         const db = await connectToDB();
         const request = new sql.Request(db);
         request.input("id", sql.Int, typeId);

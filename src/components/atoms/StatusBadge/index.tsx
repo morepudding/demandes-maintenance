@@ -1,6 +1,5 @@
 import { Badge } from "../Badge";
-
-type DemandeStatus = "En attente" | "Validé" | "Refusé" | "Abandonné";
+import type { DemandeStatus } from "@/core/services/validation.service";
 
 interface StatusBadgeProps {
     status: DemandeStatus;
@@ -22,6 +21,7 @@ interface StatusBadgeProps {
 export function StatusBadge({ status, className }: StatusBadgeProps) {
     const getVariant = (status: DemandeStatus) => {
         switch (status) {
+            case "A valider":
             case "En attente":
                 return "warning";
             case "Validé":
@@ -37,6 +37,7 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
 
     const getIcon = (status: DemandeStatus) => {
         switch (status) {
+            case "A valider":
             case "En attente":
                 return "⏳";
             case "Validé":

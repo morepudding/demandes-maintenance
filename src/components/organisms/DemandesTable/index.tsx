@@ -7,7 +7,7 @@ import DataTable, {
 } from "@/components/organisms/DataTable";
 import { Button } from "@/components/atoms/Button";
 
-type DemandeStatus = "En attente" | "Validé" | "Refusé" | "Abandonné";
+import type { DemandeStatus } from "@/core/services/validation.service";
 
 export interface Demande {
     demId: number;

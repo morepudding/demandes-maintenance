@@ -8,6 +8,7 @@ import {
     ArrowLeft,
     Filter,
 } from "lucide-react";
+import { Toaster, toast } from "sonner";
 import { StatCard } from "@/components/molecules/StatCard";
 import DemandesTable, { Demande } from "@/components/organisms/DemandesTable";
 import {
@@ -20,10 +21,15 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/molecules/AlertDialog";
-import { getGestionnaireDashboardDataAction } from "@/app/actions/demandes";
+import {
+    getGestionnaireDashboardDataAction,
+    rejectDemandeAction,
+} from "@/app/actions/demandes";
 import Link from "next/link";
 
-type StatusOption = "A valider" | "Validé" | "En attente" | "Refusé";
+import type { DemandeStatus } from "@/core/services/validation.service";
+
+type StatusOption = DemandeStatus;
 
 export default function DashboardGestionnaire() {
     const [data, setData] = useState<{
@@ -42,6 +48,7 @@ export default function DashboardGestionnaire() {
     const [toDate, setToDate] = useState<string>("");
     const [selectedDemandeForRefusal, setSelectedDemandeForRefusal] =
         useState<Demande | null>(null);
+    const [isRefusing, setIsRefusing] = useState(false);
     const alertTriggerRef = useRef<HTMLButtonElement>(null);
 
     const fetchData = async () => {
@@ -79,15 +86,26 @@ export default function DashboardGestionnaire() {
         }, 0);
     };
 
-    const handleConfirmRefusal = () => {
-        if (selectedDemandeForRefusal) {
-            // TODO: Call API to refuse the demande
-            console.log(
-                "Refusal confirmed for demande:",
-                selectedDemandeForRefusal.demId,
-            );
+    const handleConfirmRefusal = async () => {
+        if (!selectedDemandeForRefusal) return;
+
+        setIsRefusing(true);
+        try {
+            await rejectDemandeAction(selectedDemandeForRefusal.demId);
+            toast.success("Demande refusée", {
+                description: `La demande #${selectedDemandeForRefusal.demId} a été refusée.`,
+            });
+            setSelectedDemandeForRefusal(null);
+            await fetchData();
+        } catch (error) {
+            const message =
+                error instanceof Error
+                    ? error.message
+                    : "Une erreur est survenue";
+            toast.error("Refus impossible", { description: message });
+        } finally {
+            setIsRefusing(false);
         }
-        setSelectedDemandeForRefusal(null);
     };
 
     if (isLoading) {
@@ -109,6 +127,7 @@ export default function DashboardGestionnaire() {
 
     return (
         <div className="container py-10 space-y-8">
+            <Toaster position="bottom-right" richColors />
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="space-y-1">
@@ -260,7 +279,10 @@ export default function DashboardGestionnaire() {
                     </AlertDialogHeader>
                     <div className="flex gap-3 justify-end">
                         <AlertDialogCancel>Annuler</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleConfirmRefusal}>
+                        <AlertDialogAction
+                            onClick={handleConfirmRefusal}
+                            disabled={isRefusing}
+                        >
                             Refuser
                         </AlertDialogAction>
                     </div>

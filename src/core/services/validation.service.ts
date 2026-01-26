@@ -6,11 +6,14 @@ export interface GestionnaireStats {
     waiting: number;
 }
 
-export type GestionnaireStatus =
+export type DemandeStatus =
     | "A valider"
-    | "Validé"
     | "En attente"
-    | "Refusé";
+    | "Validé"
+    | "Refusé"
+    | "Abandonné";
+
+export type GestionnaireStatus = DemandeStatus;
 
 export interface GestionnaireFilters {
     status?: GestionnaireStatus;

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { StatCard } from "@/components/molecules/StatCard";
 import Link from "next/link";
+import { Toaster, toast } from "sonner";
 import {
     Dialog,
     DialogContent,
@@ -42,6 +43,7 @@ export default function TypesManagementPage() {
     const [editingType, setEditingType] = useState<Type | null>(null);
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+    const [deletingTypeId, setDeletingTypeId] = useState<string | null>(null);
     const [typeDependencies, setTypeDependencies] = useState<
         Record<string, number>
     >({});
@@ -115,7 +117,7 @@ export default function TypesManagementPage() {
 
     const handleAddType = async () => {
         if (!formData.name.trim()) {
-            alert("Le nom du type est requis");
+            toast.error("Le nom du type est requis");
             return;
         }
 
@@ -137,7 +139,7 @@ export default function TypesManagementPage() {
 
     const handleEditType = async () => {
         if (!formData.name.trim() || !editingType) {
-            alert("Le nom du type est requis");
+            toast.error("Le nom du type est requis");
             return;
         }
 
@@ -162,35 +164,58 @@ export default function TypesManagementPage() {
         }
     };
 
-    const handleDeleteType = async (id: string) => {
+    const handleDeleteClick = async (type: Type) => {
         try {
-            // Vérifier les dépendances en premier
-            const checkResult = await checkTypeForDeletionAction(parseInt(id));
+            const checkResult = await checkTypeForDeletionAction(
+                parseInt(type.id),
+            );
 
             if (!checkResult.canDelete) {
-                alert(
-                    `⚠️ ${checkResult.message}\n\nVeuillez d'abord supprimer ou réaffecter les ${checkResult.demandesCount} demande(s) associée(s).`,
-                );
+                toast.warning(checkResult.message, {
+                    description: `Veuillez d'abord supprimer ou réaffecter les ${checkResult.demandesCount} demande(s) associée(s).`,
+                });
                 return;
             }
 
-            // Si pas de dépendances, demander confirmation
-            if (
-                window.confirm(
-                    "Êtes-vous sûr de vouloir supprimer ce type ? Cette action ne peut pas être annulée.",
-                )
-            ) {
-                // Supprimer le type
-                await deleteTypeAction(parseInt(id));
-                setTypes(types.filter((t) => t.id !== id));
-            }
+            toast.error(`Supprimer ${type.name} ?`, {
+                description:
+                    "Cette action est irréversible. Cliquez sur Supprimer pour confirmer.",
+                action: {
+                    label: "Supprimer",
+                    onClick: () => handleConfirmDelete(type),
+                },
+            });
         } catch (error) {
             const errorMessage =
                 error instanceof Error
                     ? error.message
                     : "Une erreur est survenue";
-            alert(`Erreur: ${errorMessage}`);
+            toast.error("Erreur lors de la vérification", {
+                description: errorMessage,
+            });
+            console.error("Erreur lors de la vérification du type:", error);
+        }
+    };
+
+    const handleConfirmDelete = async (type: Type) => {
+        setDeletingTypeId(type.id);
+        try {
+            await deleteTypeAction(parseInt(type.id));
+            setTypes(types.filter((t) => t.id !== type.id));
+            toast.success("Type supprimé", {
+                description: `${type.name} a été supprimé avec succès.`,
+            });
+        } catch (error) {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : "Une erreur est survenue";
+            toast.error("Erreur lors de la suppression du type", {
+                description: errorMessage,
+            });
             console.error("Erreur lors de la suppression du type:", error);
+        } finally {
+            setDeletingTypeId(null);
         }
     };
 
@@ -218,6 +243,7 @@ export default function TypesManagementPage() {
 
     return (
         <div className="container py-10 space-y-8">
+            <Toaster position="bottom-right" richColors />
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="space-y-1">
@@ -535,11 +561,15 @@ export default function TypesManagementPage() {
 
                                                     <button
                                                         onClick={() =>
-                                                            handleDeleteType(
-                                                                type.id,
+                                                            handleDeleteClick(
+                                                                type,
                                                             )
                                                         }
-                                                        disabled={!canDelete}
+                                                        disabled={
+                                                            !canDelete ||
+                                                            deletingTypeId ===
+                                                                type.id
+                                                        }
                                                         className={`p-2 rounded-md transition-colors ${
                                                             canDelete
                                                                 ? "text-red-600 hover:bg-red-50 cursor-pointer"
