@@ -1,64 +1,64 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
     ClipboardList,
     CheckCircle,
-    XCircle,
     Clock,
     ArrowLeft,
     Filter,
 } from "lucide-react";
+import { Toaster, toast } from "sonner";
 import { StatCard } from "@/components/molecules/StatCard";
-import { getGestionnaireDashboardDataAction } from "@/app/actions/demandes";
+import DemandesTable, { Demande } from "@/components/organisms/DemandesTable";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/molecules/AlertDialog";
+import {
+    getGestionnaireDashboardDataAction,
+    rejectDemandeAction,
+} from "@/app/actions/demandes";
 import Link from "next/link";
-import { formatDate } from "@/utils/formatDate";
-import { StatusBadge } from "@/components/atoms/StatusBadge";
 
-interface Site {
-    sitId: number;
-    sitNom: string;
-}
+import type { DemandeStatus } from "@/core/services/validation.service";
 
-interface Type {
-    typId: number;
-    typNom: string;
-}
-
-interface Demande {
-    demId: number;
-    demObjet: string;
-    demDateCreation: string;
-    demStatut: string;
-    demEtatDemande: string;
-    sitNom: string;
-    typNom: string;
-    demCreePaLabele: string;
-}
+type StatusOption = DemandeStatus;
 
 export default function DashboardGestionnaire() {
     const [data, setData] = useState<{
         stats: {
-            awaitingValidation: number;
-            validatedThisWeek: number;
-            rejectedThisWeek: number;
-            averageProcessingTime: number;
+            toValidate: number;
+            validatedThisMonth: number;
+            waiting: number;
         };
-        demandesAValider: Demande[];
-        sites: Site[];
-        types: Type[];
+        demandes: Demande[];
     } | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [siteFilter, setSiteFilter] = useState<number | undefined>();
-    const [typeFilter, setTypeFilter] = useState<number | undefined>();
+    const [statusFilter, setStatusFilter] = useState<StatusOption | undefined>(
+        "A valider",
+    );
+    const [fromDate, setFromDate] = useState<string>("");
+    const [toDate, setToDate] = useState<string>("");
+    const [selectedDemandeForRefusal, setSelectedDemandeForRefusal] =
+        useState<Demande | null>(null);
+    const [isRefusing, setIsRefusing] = useState(false);
+    const alertTriggerRef = useRef<HTMLButtonElement>(null);
 
     const fetchData = async () => {
         try {
             setIsLoading(true);
-            const result = await getGestionnaireDashboardDataAction(
-                siteFilter,
-                typeFilter,
-            );
+            const result = await getGestionnaireDashboardDataAction({
+                status: statusFilter,
+                fromDate: fromDate || undefined,
+                toDate: toDate || undefined,
+            });
             setData(result);
         } catch (error) {
             console.error("Erreur dashboard gestionnaire:", error);
@@ -70,25 +70,42 @@ export default function DashboardGestionnaire() {
     useEffect(() => {
         fetchData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [siteFilter, typeFilter]);
-
-    const handleSiteFilterChange = (
-        e: React.ChangeEvent<HTMLSelectElement>,
-    ) => {
-        const value = e.target.value;
-        setSiteFilter(value ? Number.parseInt(value, 10) : undefined);
-    };
-
-    const handleTypeFilterChange = (
-        e: React.ChangeEvent<HTMLSelectElement>,
-    ) => {
-        const value = e.target.value;
-        setTypeFilter(value ? Number.parseInt(value, 10) : undefined);
-    };
+    }, [statusFilter, fromDate, toDate]);
 
     const resetFilters = () => {
-        setSiteFilter(undefined);
-        setTypeFilter(undefined);
+        setStatusFilter("A valider");
+        setFromDate("");
+        setToDate("");
+    };
+
+    const handleRefuseClick = (demande: Demande) => {
+        setSelectedDemandeForRefusal(demande);
+        // Trigger the alert dialog
+        setTimeout(() => {
+            alertTriggerRef.current?.click();
+        }, 0);
+    };
+
+    const handleConfirmRefusal = async () => {
+        if (!selectedDemandeForRefusal) return;
+
+        setIsRefusing(true);
+        try {
+            await rejectDemandeAction(selectedDemandeForRefusal.demId);
+            toast.success("Demande refusée", {
+                description: `La demande #${selectedDemandeForRefusal.demId} a été refusée.`,
+            });
+            setSelectedDemandeForRefusal(null);
+            await fetchData();
+        } catch (error) {
+            const message =
+                error instanceof Error
+                    ? error.message
+                    : "Une erreur est survenue";
+            toast.error("Refus impossible", { description: message });
+        } finally {
+            setIsRefusing(false);
+        }
     };
 
     if (isLoading) {
@@ -99,20 +116,18 @@ export default function DashboardGestionnaire() {
         );
     }
 
-    const { stats, demandesAValider, sites, types } = data || {
+    const { stats, demandes } = data || {
         stats: {
-            awaitingValidation: 0,
-            validatedThisWeek: 0,
-            rejectedThisWeek: 0,
-            averageProcessingTime: 0,
+            toValidate: 0,
+            validatedThisMonth: 0,
+            waiting: 0,
         },
-        demandesAValider: [],
-        sites: [],
-        types: [],
+        demandes: [],
     };
 
     return (
         <div className="container py-10 space-y-8">
+            <Toaster position="bottom-right" richColors />
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="space-y-1">
@@ -130,31 +145,24 @@ export default function DashboardGestionnaire() {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <StatCard
-                    title="À Valider"
-                    value={stats.awaitingValidation}
+                    title="Demandes à valider"
+                    value={stats.toValidate}
                     icon={ClipboardList}
                     colorClassName="text-amber-600"
                     iconClassName="bg-amber-50"
                 />
                 <StatCard
-                    title="Validées (7j)"
-                    value={stats.validatedThisWeek}
+                    title="Validées ce mois"
+                    value={stats.validatedThisMonth}
                     icon={CheckCircle}
                     colorClassName="text-emerald-600"
                     iconClassName="bg-emerald-50"
                 />
                 <StatCard
-                    title="Refusées (7j)"
-                    value={stats.rejectedThisWeek}
-                    icon={XCircle}
-                    colorClassName="text-rose-600"
-                    iconClassName="bg-rose-50"
-                />
-                <StatCard
-                    title="Délai Moyen"
-                    value={`${stats.averageProcessingTime}j`}
+                    title="En attente"
+                    value={stats.waiting}
                     icon={Clock}
                     colorClassName="text-blue-600"
                     iconClassName="bg-blue-50"
@@ -170,8 +178,8 @@ export default function DashboardGestionnaire() {
                             Demandes à Valider
                         </h2>
                         <div className="text-sm text-muted-foreground">
-                            {demandesAValider.length} demande
-                            {demandesAValider.length > 1 ? "s" : ""}
+                            {demandes.length} demande
+                            {demandes.length > 1 ? "s" : ""}
                         </div>
                     </div>
 
@@ -180,49 +188,63 @@ export default function DashboardGestionnaire() {
                         <div className="flex items-center gap-2">
                             <Filter className="w-4 h-4 text-muted-foreground" />
                             <label
-                                htmlFor="siteFilter"
+                                htmlFor="statusFilter"
                                 className="text-sm font-medium text-muted-foreground"
                             >
-                                Site :
+                                Statut :
                             </label>
                             <select
-                                id="siteFilter"
-                                value={siteFilter || ""}
-                                onChange={handleSiteFilterChange}
+                                id="statusFilter"
+                                value={statusFilter || ""}
+                                onChange={(e) =>
+                                    setStatusFilter(
+                                        (e.target.value as StatusOption | "") ||
+                                            undefined,
+                                    )
+                                }
                                 className="rounded-md border border-input bg-background px-3 py-1.5 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                             >
-                                <option value="">Tous les sites</option>
-                                {sites.map((site) => (
-                                    <option key={site.sitId} value={site.sitId}>
-                                        {site.sitNom}
-                                    </option>
-                                ))}
+                                <option value="">Tous les statuts</option>
+                                <option value="A valider">À valider</option>
+                                <option value="Validé">Validé</option>
+                                <option value="En attente">En attente</option>
+                                <option value="Refusé">Refusé</option>
                             </select>
                         </div>
 
                         <div className="flex items-center gap-2">
                             <label
-                                htmlFor="typeFilter"
+                                htmlFor="fromDate"
                                 className="text-sm font-medium text-muted-foreground"
                             >
-                                Type :
+                                Du :
                             </label>
-                            <select
-                                id="typeFilter"
-                                value={typeFilter || ""}
-                                onChange={handleTypeFilterChange}
+                            <input
+                                id="fromDate"
+                                type="date"
+                                value={fromDate}
+                                onChange={(e) => setFromDate(e.target.value)}
                                 className="rounded-md border border-input bg-background px-3 py-1.5 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                            >
-                                <option value="">Tous les types</option>
-                                {types.map((type) => (
-                                    <option key={type.typId} value={type.typId}>
-                                        {type.typNom}
-                                    </option>
-                                ))}
-                            </select>
+                            />
                         </div>
 
-                        {(siteFilter || typeFilter) && (
+                        <div className="flex items-center gap-2">
+                            <label
+                                htmlFor="toDate"
+                                className="text-sm font-medium text-muted-foreground"
+                            >
+                                Au :
+                            </label>
+                            <input
+                                id="toDate"
+                                type="date"
+                                value={toDate}
+                                onChange={(e) => setToDate(e.target.value)}
+                                className="rounded-md border border-input bg-background px-3 py-1.5 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            />
+                        </div>
+
+                        {(statusFilter || fromDate || toDate) && (
                             <button
                                 onClick={resetFilters}
                                 className="text-sm text-primary hover:underline"
@@ -234,105 +256,38 @@ export default function DashboardGestionnaire() {
                 </div>
 
                 {/* Table */}
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-left">
-                        <thead className="text-xs text-muted-foreground uppercase bg-slate-50 border-b border-border">
-                            <tr>
-                                <th className="px-6 py-4 font-medium">
-                                    Référence
-                                </th>
-                                <th className="px-6 py-4 font-medium">Titre</th>
-                                <th className="px-6 py-4 font-medium">Site</th>
-                                <th className="px-6 py-4 font-medium">Type</th>
-                                <th className="px-6 py-4 font-medium">
-                                    Demandeur
-                                </th>
-                                <th className="px-6 py-4 font-medium">Date</th>
-                                <th className="px-6 py-4 font-medium">
-                                    Statut
-                                </th>
-                                <th className="px-6 py-4 font-medium text-right">
-                                    Actions
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-border">
-                            {demandesAValider.length > 0 ? (
-                                demandesAValider.map((demande) => (
-                                    <tr
-                                        key={demande.demId}
-                                        className="hover:bg-slate-50 transition-colors"
-                                    >
-                                        <td className="px-6 py-4 font-mono font-medium text-primary">
-                                            #{demande.demId}
-                                        </td>
-                                        <td className="px-6 py-4 font-medium truncate max-w-[200px]">
-                                            {demande.demObjet}
-                                        </td>
-                                        <td className="px-6 py-4 text-muted-foreground">
-                                            {demande.sitNom || "-"}
-                                        </td>
-                                        <td className="px-6 py-4 text-muted-foreground">
-                                            {demande.typNom || "-"}
-                                        </td>
-                                        <td className="px-6 py-4 text-muted-foreground">
-                                            {demande.demCreePaLabele || "-"}
-                                        </td>
-                                        <td className="px-6 py-4 text-muted-foreground">
-                                            {demande.demDateCreation
-                                                ? formatDate(
-                                                      demande.demDateCreation,
-                                                  )
-                                                : "-"}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <StatusBadge
-                                                status={
-                                                    demande.demEtatDemande ||
-                                                    "En attente"
-                                                }
-                                            />
-                                        </td>
-                                        <td className="px-6 py-4 text-right space-x-2">
-                                            <Link
-                                                href={`/demandes/${demande.demId}/valider`}
-                                                className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-primary text-primary-foreground shadow hover:bg-primary/90 h-8 px-3"
-                                            >
-                                                Valider
-                                            </Link>
-                                            <Link
-                                                href={`/demandes/${demande.demId}`}
-                                                className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground h-8 px-3"
-                                            >
-                                                Détails
-                                            </Link>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td
-                                        colSpan={8}
-                                        className="px-6 py-12 text-center text-muted-foreground"
-                                    >
-                                        {siteFilter || typeFilter ? (
-                                            <>
-                                                Aucune demande à valider avec
-                                                ces filtres.
-                                            </>
-                                        ) : (
-                                            <>
-                                                Aucune demande en attente de
-                                                validation.
-                                            </>
-                                        )}
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                <DemandesTable
+                    demandes={demandes}
+                    onRefuseClick={handleRefuseClick}
+                    hasFilters={!!(statusFilter || fromDate || toDate)}
+                />
             </div>
+
+            {/* Refusal Confirmation Alert */}
+            <AlertDialog>
+                <AlertDialogTrigger asChild>
+                    <button ref={alertTriggerRef} style={{ display: "none" }} />
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Confirmer le refus</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Êtes-vous sûr de vouloir refuser la demande{" "}
+                            <strong>#{selectedDemandeForRefusal?.demId}</strong>{" "}
+                            ? Cette action ne peut pas être annulée.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <div className="flex gap-3 justify-end">
+                        <AlertDialogCancel>Annuler</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleConfirmRefusal}
+                            disabled={isRefusing}
+                        >
+                            Refuser
+                        </AlertDialogAction>
+                    </div>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }

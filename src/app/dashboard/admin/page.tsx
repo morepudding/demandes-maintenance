@@ -175,7 +175,7 @@ export default function DashboardAdmin() {
                     </Link>
 
                     <Link
-                        href="/admin/types"
+                        href="/dashboard/admin/types"
                         className="flex items-center gap-3 p-4 rounded-lg border border-border hover:bg-slate-50 transition-colors"
                     >
                         <FileType className="w-5 h-5 text-orange-600" />

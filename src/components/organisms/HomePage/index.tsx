@@ -66,7 +66,7 @@ export const HomePage: React.FC = () => {
             title: "Administration",
             description: "Gérer les sites, types et budgets",
             icon: Settings,
-            href: "/admin",
+            href: "/dashboard/admin",
             colorClassName: "text-slate-600",
             iconClassName: "bg-slate-50",
             roles: ["admin"],
