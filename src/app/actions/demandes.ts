@@ -13,6 +13,10 @@ import {
     deleteType,
     checkTypeDependencies,
 } from "@/core/services/types.service";
+import {
+    deleteSite,
+    checkSiteDependencies,
+} from "@/core/services/sites.service";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/page/api/auth/[...nextauth]";
 
@@ -133,6 +137,62 @@ export const checkTypeForDeletionAction = async (typeId: number) => {
         const errorMessage =
             error instanceof Error ? error.message : "Erreur inconnue";
         console.error("[checkTypeForDeletionAction] Erreur:", errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+/**
+ * Vérifie les dépendances d'un site avant suppression
+ */
+export const checkSiteForDeletionAction = async (siteId: number) => {
+    try {
+        const dependencies = await checkSiteDependencies(siteId);
+        return {
+            canDelete: dependencies.canDelete,
+            demandesCount: dependencies.demandesCount,
+            message: !dependencies.canDelete
+                ? `Ce site est utilisé par ${dependencies.demandesCount} demande(s) et ne peut pas être supprimé.`
+                : undefined,
+        };
+    } catch (error) {
+        const errorMessage =
+            error instanceof Error ? error.message : "Erreur inconnue";
+        console.error("[checkSiteForDeletionAction] Erreur:", errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+/**
+ * Supprime un site en vérifiant d'abord les dépendances
+ */
+export const deleteSiteAction = async (siteId: number) => {
+    try {
+        const session = await getServerSession(authOptions);
+
+        if (!session?.user) {
+            throw new Error("Utilisateur non authentifié");
+        }
+
+        // Vérifier les dépendances avant suppression
+        const dependencies = await checkSiteDependencies(siteId);
+
+        if (!dependencies.canDelete) {
+            throw new Error(
+                `Impossible de supprimer ce site. ${dependencies.demandesCount} demande(s) l'utilisent actuellement.`,
+            );
+        }
+
+        // Supprimer le site
+        await deleteSite(siteId);
+
+        return {
+            success: true,
+            message: "Site supprimé avec succès",
+        };
+    } catch (error) {
+        const errorMessage =
+            error instanceof Error ? error.message : "Erreur inconnue";
+        console.error("[deleteSiteAction] Erreur:", errorMessage);
         throw new Error(errorMessage);
     }
 };

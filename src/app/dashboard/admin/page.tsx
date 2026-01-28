@@ -162,7 +162,7 @@ export default function DashboardAdmin() {
                 <h2 className="text-lg font-semibold mb-6">Actions Admin</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <Link
-                        href="/admin/sites"
+                        href="/dashboard/admin/sites"
                         className="flex items-center gap-3 p-4 rounded-lg border border-border hover:bg-slate-50 transition-colors"
                     >
                         <Building2 className="w-5 h-5 text-teal-600" />
@@ -188,7 +188,7 @@ export default function DashboardAdmin() {
                     </Link>
 
                     <Link
-                        href="/admin/budgets"
+                        href="/dashboard/admin/budgets"
                         className="flex items-center gap-3 p-4 rounded-lg border border-border hover:bg-slate-50 transition-colors"
                     >
                         <ClipboardList className="w-5 h-5 text-blue-600" />
@@ -201,7 +201,7 @@ export default function DashboardAdmin() {
                     </Link>
 
                     <Link
-                        href="/admin/users"
+                        href="/dashboard/admin/users"
                         className="flex items-center gap-3 p-4 rounded-lg border border-border hover:bg-slate-50 transition-colors"
                     >
                         <Users className="w-5 h-5 text-purple-600" />
