@@ -50,8 +50,8 @@ export const authOptions: NextAuthOptions = {
                 token.idToken = account.id_token;
             }
             if (profile) {
-                token.displayName =
-                    (profile as { name?: string }).name || token.name;
+                const profileName = (profile as { name?: string }).name;
+                token.displayName = profileName ?? token.name ?? undefined;
             }
             return token;
         },

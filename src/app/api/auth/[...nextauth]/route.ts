@@ -9,6 +9,7 @@ declare module "next-auth" {
             image?: string | null;
             accessToken?: string;
             idToken?: string;
+            displayName?: string;
         };
     }
 }
@@ -17,6 +18,7 @@ declare module "next-auth/jwt" {
     interface JWT {
         accessToken?: string;
         idToken?: string;
+        displayName?: string;
     }
 }
 
@@ -28,7 +30,7 @@ import type { NextAuthOptions } from "next-auth";
 
 const isDev = process.env.NODE_ENV === "development";
 
-const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
     providers: [
         // Provider de dev simple (sans Azure AD)
         ...(isDev
@@ -93,6 +95,7 @@ const authOptions: NextAuthOptions = {
             if (session.user) {
                 session.user.accessToken = token.accessToken;
                 session.user.idToken = token.idToken;
+                session.user.displayName = token.displayName;
             }
             return session;
         },

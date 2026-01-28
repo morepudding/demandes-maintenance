@@ -102,7 +102,6 @@ export default async function connectToDB() {
                 config.authentication = {
                     type: "azure-active-directory-default",
                     options: {
-                        userName: user,
                         tenantId: tenantId,
                     },
                 };

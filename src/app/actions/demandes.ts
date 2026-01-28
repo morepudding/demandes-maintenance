@@ -12,11 +12,20 @@ import {
 import {
     deleteType,
     checkTypeDependencies,
+    getTypesStats,
 } from "@/core/services/types.service";
 import {
     deleteSite,
     checkSiteDependencies,
+    getSitesStats,
 } from "@/core/services/sites.service";
+import {
+    deleteBudget,
+    checkBudgetDependencies,
+    getAllBudgets,
+    createBudget,
+    updateBudget,
+} from "@/core/services/budgets.service";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/page/api/auth/[...nextauth]";
 
@@ -43,10 +52,16 @@ export const getDemandeurDashboardDataAction = async () => {
             using: userName,
         });
 
-        const [stats, recentDemandes] = await Promise.all([
+        const [stats, recentDemandesRaw] = await Promise.all([
             getDemandeurStats(userName),
             getRecentDemandes(userName),
         ]);
+
+        const recentDemandes = Array.isArray(recentDemandesRaw)
+            ? recentDemandesRaw
+            : recentDemandesRaw
+              ? [recentDemandesRaw]
+              : [];
 
         return { stats, recentDemandes };
     } catch (error) {
@@ -68,6 +83,31 @@ export const getGestionnaireDashboardDataAction = async (
         return data;
     } catch (error) {
         console.error("Erreur récupération dashboard gestionnaire", error);
+        throw error;
+    }
+};
+
+export const getAdminDashboardDataAction = async () => {
+    try {
+        const [sitesStats, typesStats] = await Promise.all([
+            getSitesStats(),
+            getTypesStats(),
+        ]);
+
+        return {
+            stats: {
+                totalDemandes: sitesStats.totalDemandes ?? 0,
+                demandesThisWeek: 0,
+                validatedThisWeek: 0,
+                rejectedThisWeek: 0,
+                averageProcessingTime: 0,
+                totalUsers: 0,
+                totalSites: sitesStats.totalSites ?? 0,
+                totalTypes: typesStats.totalTypes ?? 0,
+            },
+        };
+    } catch (error) {
+        console.error("Erreur récupération dashboard admin", error);
         throw error;
     }
 };
@@ -193,6 +233,130 @@ export const deleteSiteAction = async (siteId: number) => {
         const errorMessage =
             error instanceof Error ? error.message : "Erreur inconnue";
         console.error("[deleteSiteAction] Erreur:", errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+/**
+ * Vérifie les dépendances d'un budget avant suppression
+ */
+export const checkBudgetForDeletionAction = async (budgetId: number) => {
+    try {
+        const dependencies = await checkBudgetDependencies(budgetId);
+        return {
+            canDelete: !dependencies.hasDependencies,
+            demandesCount: dependencies.demandesCount,
+            message: !dependencies.hasDependencies
+                ? `Ce budget est utilisé par ${dependencies.demandesCount} demande(s) et ne peut pas être supprimé.`
+                : undefined,
+        };
+    } catch (error) {
+        const errorMessage =
+            error instanceof Error ? error.message : "Erreur inconnue";
+        console.error("[checkBudgetForDeletionAction] Erreur:", errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+/**
+ * Supprime un budget en vérifiant d'abord les dépendances
+ */
+export const deleteBudgetAction = async (budgetId: number) => {
+    try {
+        const session = await getServerSession(authOptions);
+
+        if (!session?.user) {
+            throw new Error("Utilisateur non authentifié");
+        }
+
+        // Vérifier les dépendances avant suppression
+        const dependencies = await checkBudgetForDeletionAction(budgetId);
+
+        if (!dependencies.canDelete) {
+            throw new Error(
+                `Impossible de supprimer ce budget. ${dependencies.demandesCount} demande(s) l'utilisent actuellement.`,
+            );
+        }
+
+        // Supprimer le budget
+        await deleteBudget(budgetId);
+
+        return {
+            success: true,
+            message: "Budget supprimé avec succès",
+        };
+    } catch (error) {
+        const errorMessage =
+            error instanceof Error ? error.message : "Erreur inconnue";
+        console.error("[deleteBudgetAction] Erreur:", errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+/**
+ * Récupère tous les budgets
+ */
+export const getAllBudgetsAction = async () => {
+    try {
+        const budgets = await getAllBudgets();
+        return budgets;
+    } catch (error) {
+        const errorMessage =
+            error instanceof Error ? error.message : "Erreur inconnue";
+        console.error("[getAllBudgetsAction] Erreur:", errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+/**
+ * Crée un nouveau budget
+ */
+export const createBudgetAction = async (budgetName: string) => {
+    try {
+        const session = await getServerSession(authOptions);
+
+        if (!session?.user) {
+            throw new Error("Utilisateur non authentifié");
+        }
+
+        await createBudget(budgetName);
+
+        return {
+            success: true,
+            message: "Budget créé avec succès",
+        };
+    } catch (error) {
+        const errorMessage =
+            error instanceof Error ? error.message : "Erreur inconnue";
+        console.error("[createBudgetAction] Erreur:", errorMessage);
+        throw new Error(errorMessage);
+    }
+};
+
+/**
+ * Met à jour un budget
+ */
+export const updateBudgetAction = async (
+    budgetId: number,
+    budgetName: string,
+) => {
+    try {
+        const session = await getServerSession(authOptions);
+
+        if (!session?.user) {
+            throw new Error("Utilisateur non authentifié");
+        }
+
+        await updateBudget(budgetId, budgetName);
+
+        return {
+            success: true,
+            message: "Budget mis à jour avec succès",
+        };
+    } catch (error) {
+        const errorMessage =
+            error instanceof Error ? error.message : "Erreur inconnue";
+        console.error("[updateBudgetAction] Erreur:", errorMessage);
         throw new Error(errorMessage);
     }
 };

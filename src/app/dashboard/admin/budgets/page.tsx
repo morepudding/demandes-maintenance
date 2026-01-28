@@ -19,44 +19,46 @@ import {
     DialogTrigger,
 } from "@/components/molecules/Dialog";
 import {
-    deleteSiteAction,
-    checkSiteForDeletionAction,
+    deleteBudgetAction,
+    checkBudgetForDeletionAction,
 } from "@/app/actions/demandes";
 
-interface Site {
+interface Budget {
     id: string;
     name: string;
 }
 
-export default function SiteManagementPage() {
-    const [sites, setSites] = useState<Site[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [editingSite, setEditingSite] = useState<Site | null>(null);
-    const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-    const [deletingSiteId, setDeletingSiteId] = useState<string | null>(null);
-    const [siteDependencies, setSiteDependencies] = useState<
+export default function BudgetManagementPage() {
+    const [budgets, setBudgets] = useState<Budget[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
+    const [isAddDialogOpen, setIsAddDialogOpen] = useState<boolean>(false);
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
+    const [deletingBudgetId, setDeletingBudgetId] = useState<string | null>(
+        null,
+    );
+    const [budgetDependencies, setBudgetDependencies] = useState<
         Record<string, number>
     >({});
-    const [formData, setFormData] = useState({ name: "" });
+    const [formData, setFormData] = useState<{ name: string }>({ name: "" });
 
     useEffect(() => {
         fetchData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const loadSiteDependencies = async (sitesList: Site[]) => {
+    const loadBudgetDependencies = async (budgetsList: Budget[]) => {
         try {
             const dependencies: Record<string, number> = {};
 
-            for (const site of sitesList) {
-                const result = await checkSiteForDeletionAction(
-                    parseInt(site.id),
+            for (const budget of budgetsList) {
+                const result = await checkBudgetForDeletionAction(
+                    parseInt(budget.id),
                 );
-                dependencies[site.id] = result.demandesCount;
+                dependencies[budget.id] = result.demandesCount;
             }
 
-            setSiteDependencies(dependencies);
+            setBudgetDependencies(dependencies);
         } catch (error) {
             console.error(
                 "Erreur lors du chargement des dépendances des sites:",
@@ -68,35 +70,34 @@ export default function SiteManagementPage() {
     const fetchData = async () => {
         try {
             setIsLoading(true);
-            // TODO: Replace with actual API call to fetch sites
-            const mockSites: Site[] = [
-                { id: "1", name: "Site A" },
-                { id: "2", name: "Site B" },
-                { id: "3", name: "Site C" },
+            //TODO: add API call
+            const mockBudgets: Budget[] = [
+                { id: "1", name: "Budget A" },
+                { id: "2", name: "Budget B" },
             ];
-            setSites(mockSites);
+            setBudgets(mockBudgets);
 
-            await loadSiteDependencies(mockSites);
+            await loadBudgetDependencies(mockBudgets);
         } catch (error) {
-            console.error("Erreur lors du chargement des sites:", error);
+            console.error("Erreur lors du chargement des budgets:", error);
         } finally {
             setIsLoading(false);
         }
     };
 
-    const handleAddSite = async () => {
+    const handleAddBudget = async () => {
         if (!formData.name.trim()) {
-            toast.error("Le nom du site est requis.");
+            toast.error("Le nom du budget est requis.");
             return;
         }
 
         try {
-            // TODO add API call
-            const newSite: Site = {
+            //TODO : add API call
+            const newBudget: Budget = {
                 id: Date.now().toString(),
                 name: formData.name,
             };
-            setSites([...sites, newSite]);
+            setBudgets([...budgets, newBudget]);
             setFormData({ name: "" });
             setIsAddDialogOpen(false);
         } catch (error) {
@@ -104,36 +105,36 @@ export default function SiteManagementPage() {
         }
     };
 
-    const handleEditSite = async () => {
-        if (!formData.name.trim() || !editingSite) {
-            toast.error("Le nom du site est requis.");
+    const handleEditBudget = async () => {
+        if (!formData.name.trim() || !editingBudget) {
+            toast.error("Le nom du budget est requis.");
             return;
         }
 
         try {
-            //TODO add API call
-            setSites(
-                sites.map((s) =>
-                    s.id === editingSite.id
+            //TODO : add API call
+            setBudgets(
+                budgets.map((b) =>
+                    b.id === editingBudget.id
                         ? {
-                              ...s,
+                              ...b,
                               name: formData.name,
                           }
-                        : s,
+                        : b,
                 ),
             );
             setFormData({ name: "" });
-            setEditingSite(null);
+            setEditingBudget(null);
             setIsEditDialogOpen(false);
         } catch (error) {
-            console.error("Erreur lors de la modification du site:", error);
+            console.error("Erreur lors de la modification du budget:", error);
         }
     };
 
-    const handleDeleteClick = async (site: Site) => {
+    const handleDeleteClick = async (budget: Budget) => {
         try {
-            const checkResult = await checkSiteForDeletionAction(
-                parseInt(site.id),
+            const checkResult = await checkBudgetForDeletionAction(
+                parseInt(budget.id),
             );
 
             if (!checkResult.canDelete) {
@@ -143,11 +144,11 @@ export default function SiteManagementPage() {
                 return;
             }
 
-            toast.error(`Supprimer ${site.name} ?`, {
+            toast.error(`Supprimer ${budget.name} ?`, {
                 description: "Cette action est irréversible.",
                 action: {
                     label: "Supprimer",
-                    onClick: () => handleConfirmDelete(site),
+                    onClick: () => handleConfirmDelete(budget),
                 },
             });
         } catch (error) {
@@ -158,43 +159,41 @@ export default function SiteManagementPage() {
             toast.error("Erreur lors de la vérification", {
                 description: errorMessage,
             });
-            console.error("Erreur lors de la vérification du site:", error);
+            console.error("Erreur lors de la vérification du budget :", error);
         }
     };
 
-    const handleConfirmDelete = async (site: Site) => {
-        setDeletingSiteId(site.id);
+    const handleConfirmDelete = async (budget: Budget) => {
+        setDeletingBudgetId(budget.id);
         try {
-            await deleteSiteAction(parseInt(site.id));
-            setSites(sites.filter((s) => s.id !== site.id));
-            toast.success("Site supprimé.", {
-                description: `${site.name} a été supprimé avec succès.`,
+            await deleteBudgetAction(parseInt(budget.id));
+            setBudgets(budgets.filter((b) => b.id !== budget.id));
+            toast.success("Budget supprimé.", {
+                description: `${budget.name} a été supprimé avec succès.`,
             });
         } catch (error) {
             const errorMessage =
                 error instanceof Error
                     ? error.message
                     : "Une erreur est survenue";
-            toast.error("Erreur lors de la suppression du site", {
+            toast.error("Erreur lors de la suppression du budget", {
                 description: errorMessage,
             });
-            console.error("Erreur lors de la suppression du site:", error);
+            console.error("Erreur lors de la suppression du budget:", error);
         } finally {
-            setDeletingSiteId(null);
+            setDeletingBudgetId(null);
         }
     };
 
-    const openEditDialog = (site: Site) => {
-        setEditingSite(site);
-        setFormData({
-            name: site.name,
-        });
+    const openEditDialog = (budget: Budget) => {
+        setEditingBudget(budget);
+        setFormData({ name: budget.name });
         setIsEditDialogOpen(true);
     };
 
     const resetForm = () => {
         setFormData({ name: "" });
-        setEditingSite(null);
+        setEditingBudget(null);
     };
 
     if (isLoading) {
@@ -216,12 +215,13 @@ export default function SiteManagementPage() {
                         <Link href="/dashboard/admin">Retour au dashboard</Link>
                     </div>
                     <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-                        Gestion des sites
+                        Gestion des budgets
                     </h1>
                     <p className="text-muted-foreground text-lg">
-                        Créez et gérez les sites.
+                        Créez et gérez les budgets.
                     </p>
                 </div>
+
                 <Dialog
                     open={isAddDialogOpen}
                     onOpenChange={setIsAddDialogOpen}
@@ -229,20 +229,20 @@ export default function SiteManagementPage() {
                     <DialogTrigger asChild>
                         <button className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors font-medium">
                             <Plus className="w-5 h-5" />
-                            Ajouter un Site
+                            Ajouter un Budget
                         </button>
                     </DialogTrigger>
                     <DialogContent>
                         <DialogHeader>
-                            <DialogTitle>Créer un nouveau site</DialogTitle>
+                            <DialogTitle>Créer un nouveau budget</DialogTitle>
                             <DialogDescription>
-                                Remplissez les informations du nouveau site.
+                                Remplissez les informations du nouveau budget.
                             </DialogDescription>
                         </DialogHeader>
                         <div className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-slate-900 mb-2">
-                                    Nom du site *
+                                    Nom du budget *
                                 </label>
                                 <input
                                     type="text"
@@ -253,7 +253,7 @@ export default function SiteManagementPage() {
                                             name: e.target.value,
                                         })
                                     }
-                                    placeholder="Ex: Site des Cyclades"
+                                    placeholder="Ex: Budget Marketing"
                                     className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                 />
                             </div>
@@ -268,7 +268,7 @@ export default function SiteManagementPage() {
                                     Annuler
                                 </button>
                                 <button
-                                    onClick={handleAddSite}
+                                    onClick={handleAddBudget}
                                     className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors font-medium"
                                 >
                                     Créer
@@ -282,19 +282,19 @@ export default function SiteManagementPage() {
             <div className="bg-white rounded-xl border border-border shadow-sm overflow-hidden">
                 <div className="p-6 border-b border-border">
                     <h2 className="text-lg font-semibold">
-                        Liste des Sites ({sites.length})
+                        Liste des Budgets ({budgets.length})
                     </h2>
                 </div>
 
-                {sites.length === 0 ? (
+                {budgets.length === 0 ? (
                     <div className="p-12 text-center">
                         <FileType className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
                         <p className="text-muted-foreground text-lg">
-                            Aucun site trouvé.
+                            Aucun budget trouvé.
                         </p>
                         <p className="text-sm text-muted-foreground mb-4">
                             Commencez par en créer un en cliquant sur le bouton
-                            &quot;Ajouter un Site&quot;.
+                            &quot;Ajouter un Budget&quot;.
                         </p>
                     </div>
                 ) : (
@@ -314,18 +314,18 @@ export default function SiteManagementPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {sites.map((site) => {
+                                {budgets.map((budget) => {
                                     const dependencyCount =
-                                        siteDependencies[site.id] || 0;
+                                        budgetDependencies[budget.id] || 0;
                                     const canDelete = dependencyCount === 0;
 
                                     return (
                                         <tr
-                                            key={site.id}
+                                            key={budget.id}
                                             className={`border-b border-border transition-colors ${canDelete ? "hover:bg-slate-50" : "bg-orange-50/30"}`}
                                         >
                                             <td className="px-6 py-4 text-sm font-medium text-slate-900">
-                                                {site.name}
+                                                {budget.name}
                                             </td>
 
                                             <td className="px-6 py-4">
@@ -351,16 +351,16 @@ export default function SiteManagementPage() {
                                                     <Dialog
                                                         open={
                                                             isEditDialogOpen &&
-                                                            editingSite?.id ===
-                                                                site.id
+                                                            editingBudget?.id ===
+                                                                budget.id
                                                         }
                                                         onOpenChange={(
                                                             open,
                                                         ) => {
                                                             if (
                                                                 !open &&
-                                                                editingSite?.id ===
-                                                                    site.id
+                                                                editingBudget?.id ===
+                                                                    budget.id
                                                             ) {
                                                                 setIsEditDialogOpen(
                                                                     false,
@@ -373,7 +373,7 @@ export default function SiteManagementPage() {
                                                             <button
                                                                 onClick={() =>
                                                                     openEditDialog(
-                                                                        site,
+                                                                        budget,
                                                                     )
                                                                 }
                                                                 className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
@@ -386,20 +386,20 @@ export default function SiteManagementPage() {
                                                             <DialogHeader>
                                                                 <DialogTitle>
                                                                     Modifier le
-                                                                    site
+                                                                    budget
                                                                 </DialogTitle>
                                                                 <DialogDescription>
                                                                     Mettez à
                                                                     jour les
                                                                     informations
-                                                                    du site.
+                                                                    du budget.
                                                                 </DialogDescription>
                                                             </DialogHeader>
                                                             <div className="space-y-4">
                                                                 <div>
                                                                     <label className="block text-sm font-medium text-slate-900 mb-2">
                                                                         Nom du
-                                                                        site *
+                                                                        budget *
                                                                     </label>
                                                                     <input
                                                                         type="text"
@@ -418,7 +418,7 @@ export default function SiteManagementPage() {
                                                                                 },
                                                                             )
                                                                         }
-                                                                        placeholder="Ex: Site des Cyclades"
+                                                                        placeholder="Ex: Budget Marketing"
                                                                         className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                                                     />
                                                                 </div>
@@ -436,7 +436,7 @@ export default function SiteManagementPage() {
                                                                     </button>
                                                                     <button
                                                                         onClick={() => {
-                                                                            handleEditSite();
+                                                                            handleEditBudget();
                                                                         }}
                                                                         className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors font-medium"
                                                                     >
@@ -450,13 +450,13 @@ export default function SiteManagementPage() {
                                                     <button
                                                         onClick={() => {
                                                             handleDeleteClick(
-                                                                site,
+                                                                budget,
                                                             );
                                                         }}
                                                         disabled={
                                                             !canDelete ||
-                                                            deletingSiteId ===
-                                                                site.id
+                                                            deletingBudgetId ===
+                                                                budget.id
                                                         }
                                                         className={`p-2 rounded-md transition-colors ${
                                                             canDelete

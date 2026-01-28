@@ -8,6 +8,13 @@ import Link from "next/link";
 import { formatDate } from "@/utils/formatDate";
 
 export default function DashboardDemandeur() {
+    interface RecentDemande {
+        demId?: number | string;
+        demTitre?: string;
+        demDateCreation?: string | Date;
+        demEtatDemande?: string;
+    }
+
     const [data, setData] = useState<{
         stats: {
             total: number;
@@ -15,7 +22,7 @@ export default function DashboardDemandeur() {
             approved: number;
             rejected: number;
         };
-        recentDemandes: Record<string, unknown>[];
+        recentDemandes: RecentDemande[];
     } | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -23,7 +30,10 @@ export default function DashboardDemandeur() {
         const fetchData = async () => {
             try {
                 const result = await getDemandeurDashboardDataAction();
-                setData(result);
+                setData({
+                    stats: result.stats,
+                    recentDemandes: result.recentDemandes ?? [],
+                });
             } catch (error) {
                 console.error("Erreur dashboard:", error);
             } finally {
@@ -129,42 +139,39 @@ export default function DashboardDemandeur() {
                         </thead>
                         <tbody className="divide-y divide-border">
                             {recentDemandes.length > 0 ? (
-                                recentDemandes.map(
-                                    (demande: Record<string, unknown>) => (
-                                        <tr
-                                            key={demande.Dem_Id}
-                                            className="hover:bg-slate-50 transition-colors"
-                                        >
-                                            <td className="px-6 py-4 font-mono font-medium text-primary">
-                                                #{demande.Dem_Id}
-                                            </td>
-                                            <td className="px-6 py-4 font-medium truncate max-w-[200px]">
-                                                {demande.Dem_Titre ||
-                                                    "Sans titre"}
-                                            </td>
-                                            <td className="px-6 py-4 text-muted-foreground">
-                                                {demande.Dem_Date_Creation
-                                                    ? formatDate(
-                                                          demande.Dem_Date_Creation,
-                                                      )
-                                                    : "-"}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                                    {demande.Dem_Etat_Demande ||
-                                                        "En attente"}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 text-right text-indigo-600 hover:text-indigo-800 font-medium">
-                                                <Link
-                                                    href={`/demandes/${demande.Dem_Id}`}
-                                                >
-                                                    Détails
-                                                </Link>
-                                            </td>
-                                        </tr>
-                                    ),
-                                )
+                                recentDemandes.map((demande, index) => (
+                                    <tr
+                                        key={demande.demId ?? index}
+                                        className="hover:bg-slate-50 transition-colors"
+                                    >
+                                        <td className="px-6 py-4 font-mono font-medium text-primary">
+                                            #{demande.demId ?? "-"}
+                                        </td>
+                                        <td className="px-6 py-4 font-medium truncate max-w-[200px]">
+                                            {demande.demTitre || "Sans titre"}
+                                        </td>
+                                        <td className="px-6 py-4 text-muted-foreground">
+                                            {demande.demDateCreation
+                                                ? formatDate(
+                                                      demande.demDateCreation,
+                                                  )
+                                                : "-"}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                {demande.demEtatDemande ||
+                                                    "En attente"}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 text-right text-indigo-600 hover:text-indigo-800 font-medium">
+                                            <Link
+                                                href={`/demandes/${demande.demId}`}
+                                            >
+                                                Détails
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))
                             ) : (
                                 <tr>
                                     <td

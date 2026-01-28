@@ -1,169 +1,67 @@
-import connectToDB from "../lib/db";
-import sql from "mssql";
+import {
+    getEntityById,
+    getAllEntities,
+    createEntity,
+    updateEntity,
+    deleteEntity,
+    checkEntityDependencies,
+    getEntityCount,
+    BaseEntityConfig,
+    BaseEntity,
+} from "./base.service";
 
-export interface TypeDemande {
+export interface TypeDemande extends BaseEntity {
     id: number;
     name: string;
 }
 
-export const createType = async (typeName: string): Promise<void> => {
-    try {
-        const db = await connectToDB();
-        const request = new sql.Request(db);
-        request.input("name", sql.NVarChar, typeName);
-
-        const query = `
-            INSERT INTO Type_Demande (Type_Dem_Libelle)
-            VALUES (@name)
-        `;
-        await request.query(query);
-    } catch (error) {
-        const errorMessage =
-            error instanceof Error ? error.message : "Erreur inconnue.";
-        console.error("[createType] Erreur:", errorMessage);
-        throw new Error(`Impossible de créer le type: ${errorMessage}`);
-    }
+const TYPE_CONFIG: BaseEntityConfig = {
+    tableName: "Type_Demande",
+    idColumn: "Type_Dem_Id",
+    nameColumn: "Type_Dem_Libelle",
+    dependencyTable: "Demande",
+    dependencyColumn: "Dem_Type_Demande",
+    errorContext: "type",
 };
 
 export const getTypeById = async (
     typeId: number,
 ): Promise<TypeDemande | null> => {
-    try {
-        const db = await connectToDB();
-        const request = new sql.Request(db);
-        request.input("id", sql.Int, typeId);
-
-        const query = `
-            SELECT 
-                Type_Dem_Id as id,
-                Type_Dem_Libelle as name
-            FROM Type_Demande
-            WHERE Type_Dem_Id = @id
-        `;
-
-        const result = await request.query(query);
-
-        const type = result.recordset[0];
-        return type
-            ? {
-                  id: type.id,
-                  name: type.name,
-              }
-            : null;
-    } catch (error) {
-        const errorMessage =
-            error instanceof Error ? error.message : "Erreur inconnue.";
-        console.error("[getTypeById] Erreur:", errorMessage);
-        throw new Error(`Impossible de récupérer le type: ${errorMessage}`);
-    }
+    return getEntityById(typeId, TYPE_CONFIG);
 };
 
-export const getTypesStats = async (): Promise<TypeDemande> => {
-    try {
-        const db = await connectToDB();
-        const request = new sql.Request(db);
+export const getAllTypes = async (): Promise<TypeDemande[]> => {
+    return getAllEntities(TYPE_CONFIG);
+};
 
-        const query = `
-            SELECT 
-                Type_Dem_Id as id,
-                Type_Dem_Libelle as name
-            FROM Type_Demande
-        `;
-
-        const result = await request.query(query);
-
-        const stats = result.recordset[0];
-        if (!stats) {
-            return { id: 0, name: "" };
-        }
-        return {
-            id: stats.id || 0,
-            name: stats.name || "",
-        };
-    } catch (error) {
-        const errorMessage =
-            error instanceof Error ? error.message : "Erreur inconnue.";
-        console.error("[getTypesStats] Erreur:", errorMessage);
-        throw new Error(
-            `Impossible de récupérer les statistiques: ${errorMessage}`,
-        );
-    }
+export const createType = async (typeName: string): Promise<void> => {
+    return createEntity(typeName, TYPE_CONFIG);
 };
 
 export const updateType = async (
     typeId: number,
     typeName: string,
 ): Promise<void> => {
-    try {
-        const db = await connectToDB();
-        const request = new sql.Request(db);
-        request.input("id", sql.Int, typeId);
-        request.input("name", sql.NVarChar, typeName);
-
-        const query = `
-            UPDATE Type_Demande
-            SET Type_Dem_Libelle = @name
-            WHERE Type_Dem_Id = @id
-        `;
-        await request.query(query);
-    } catch (error) {
-        const errorMessage =
-            error instanceof Error ? error.message : "Erreur inconnue.";
-        console.error("[updateType] Erreur:", errorMessage);
-        throw new Error(`Impossible de mettre à jour le type: ${errorMessage}`);
-    }
-};
-
-/**
- * Vérifie les dépendances d'un type (nombre de demandes l'utilisant)
- */
-export const checkTypeDependencies = async (
-    typeId: number,
-): Promise<{ hasDependencies: boolean; demandesCount: number }> => {
-    try {
-        const db = await connectToDB();
-        const request = new sql.Request(db);
-        request.input("typeId", sql.Int, typeId);
-
-        const query = `
-            SELECT COUNT(*) as demandesCount
-            FROM Demande
-            WHERE Dem_Type_Demande = @typeId
-        `;
-
-        const result = await request.query(query);
-        const record = result.recordset[0];
-        const demandesCount = record?.demandesCount || 0;
-
-        return {
-            hasDependencies: demandesCount > 0,
-            demandesCount,
-        };
-    } catch (error) {
-        const errorMessage =
-            error instanceof Error ? error.message : "Erreur inconnue.";
-        console.error("[checkTypeDependencies] Erreur:", errorMessage);
-        throw new Error(
-            `Impossible de vérifier les dépendances: ${errorMessage}`,
-        );
-    }
+    return updateEntity(typeId, typeName, TYPE_CONFIG);
 };
 
 export const deleteType = async (typeId: number): Promise<void> => {
-    try {
-        const db = await connectToDB();
-        const request = new sql.Request(db);
-        request.input("id", sql.Int, typeId);
+    return deleteEntity(typeId, TYPE_CONFIG);
+};
 
-        const query = `
-            DELETE FROM Type_Demande
-            WHERE Type_Dem_Id = @id
-        `;
-        await request.query(query);
-    } catch (error) {
-        const errorMessage =
-            error instanceof Error ? error.message : "Erreur inconnue.";
-        console.error("[deleteType] Erreur:", errorMessage);
-        throw new Error(`Impossible de supprimer le type: ${errorMessage}`);
-    }
+export const checkTypeDependencies = async (
+    typeId: number,
+): Promise<{ hasDependencies: boolean; demandesCount: number }> => {
+    return checkEntityDependencies(typeId, TYPE_CONFIG);
+};
+
+export const getTypesStats = async (): Promise<{
+    totalTypes: number;
+    activeTypes: number;
+}> => {
+    const totalTypes = await getEntityCount(TYPE_CONFIG);
+    return {
+        totalTypes,
+        activeTypes: totalTypes,
+    };
 };
