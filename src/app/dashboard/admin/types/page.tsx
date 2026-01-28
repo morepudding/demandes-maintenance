@@ -9,7 +9,6 @@ import {
     Trash2,
     AlertCircle,
 } from "lucide-react";
-import { StatCard } from "@/components/molecules/StatCard";
 import Link from "next/link";
 import { Toaster, toast } from "sonner";
 import {
@@ -32,13 +31,8 @@ interface Type {
     createdAt: string;
 }
 
-interface TypesStats {
-    totalTypes: number;
-}
-
 export default function TypesManagementPage() {
     const [types, setTypes] = useState<Type[]>([]);
-    const [stats, setStats] = useState<TypesStats | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [editingType, setEditingType] = useState<Type | null>(null);
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -102,9 +96,6 @@ export default function TypesManagementPage() {
                 },
             ];
             setTypes(mockTypes);
-            setStats({
-                totalTypes: mockTypes.length,
-            });
 
             // Charger les dépendances pour chaque type
             await loadTypeDependencies(mockTypes);
@@ -330,22 +321,6 @@ export default function TypesManagementPage() {
                         </div>
                     </DialogContent>
                 </Dialog>
-            </div>
-
-            {/* Stats Card */}
-            <div>
-                <h2 className="text-sm font-semibold text-muted-foreground mb-4 uppercase">
-                    Vue d&apos;ensemble
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <StatCard
-                        title="Total Types"
-                        value={stats?.totalTypes || 0}
-                        icon={FileType}
-                        colorClassName="text-orange-600"
-                        iconClassName="bg-orange-50"
-                    />
-                </div>
             </div>
 
             {/* Types Table */}
